@@ -1,0 +1,32 @@
+% ===========================================================================
+% Section IV-F -- Finite-Word-Length and Quantization Analysis
+% Owner: Member 4
+% ===========================================================================
+\subsection{Finite-Word-Length and Quantization Error Analysis}
+Moving the pipeline onto a microcontroller or a fixed-point DSP raises the
+finite-word-length question. The design was evaluated in a $16$-bit Q$1.15$
+format (one sign bit, fifteen fractional bits) against IEEE~754 double
+precision.
+
+\emph{1) Filter structure and stability.} Direct-form IIR filters are sensitive
+to coefficient rounding: a pole can be pushed onto or outside the unit circle.
+The cascade SOS form of Section~II-B isolates each conjugate pair, so an error
+in one biquad stays local. The largest pole radius of the designed filter is
+$r_{\max}=0.8418$, and under Q$1.15$ quantization the poles move by less than
+$0.0012$. Stability is therefore not at risk.
+
+\emph{2) Quantization noise and SQNR.} Across the filtered passband the
+signal-to-quantization-noise ratio is $84.36$~dB. The theoretical limit for
+$B=16$ bits is
+\begin{equation}
+  \text{SQNR}_{\text{theoretical}} \approx 6.02B + 1.76~\text{dB}
+  = 98.08~\text{dB},
+  \label{eq:sqnr}
+\end{equation}
+so the implementation sits about $14$~dB below the ideal figure, which is
+normal once the filter and FFT round-off are counted alongside the ADC
+quantization. The residual $e_q[n]=y_{\text{float}}[n]-y_{Q15}[n]$ shows
+zero-mean white behaviour with no tonal component, and the resulting Q$1.15$
+envelope spectrum is visually indistinguishable from the double-precision
+reference. Sixteen-bit arithmetic therefore keeps the diagnostic information
+intact.

@@ -9,7 +9,7 @@ for normal running sits above the fault peaks, so they are missed. At $3$~HP
 friction raises the whole floor, and the same threshold is crossed by noise in
 dozens of bins. No single fixed value satisfies both cases.
 
-A CFAR rule handles both cases. It slides a window along the SES and estimates
+A CFAR rule~\cite{richards} handles both cases. It slides a window along the SES and estimates
 the local floor from the bins around the test bin, so the comparison is always
 made against the floor that is actually there. No training data is needed, and
 the false-alarm rate stays fixed as the load changes.
@@ -64,7 +64,7 @@ and the threshold is
 \end{equation}
 with $\gamma=4.5$. A larger $\gamma$ raises the threshold and lowers the
 false-alarm rate; a smaller one does the opposite. The median has a breakdown
-point of $50\%$, so up to half of the window can be contaminated before
+point of $50\%$~\cite{huber}, so up to half of the window can be contaminated before
 $T_{\text{MAD}}$ moves. The threshold follows the floor from $0$~HP to
 $3$~HP.
 

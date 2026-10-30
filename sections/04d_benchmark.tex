@@ -1,42 +1,69 @@
 % ===========================================================================
-% Section IV-D -- Quantitative Benchmark
+% Section IV-E -- Quantitative Benchmark and Comparative Discussion
 % Owner: Member 4
 % ===========================================================================
-\subsection{Quantitative Benchmark}
-Table~\ref{tab:benchmark} reports the three detection rules on the same
-Kurtosis-guided SES, so that the comparison isolates the thresholding stage.
-Spectral SNR gain is defined as the ratio of the mean comb peak to the median
-out-of-comb floor in dB, the detection rate is the fraction of segments in
-which all three harmonics are declared present, and the false-alarm rate is
-the fraction of out-of-comb bins that exceed the threshold. The static rule
-is expected to trade false alarms at heavy load against missed detections at
-light load, CA-CFAR to lose detections through target masking, and the
-proposed rule to hold a near-constant false-alarm rate across the load sweep.
+\subsection{Quantitative Benchmark and Comparative Discussion}
+Table~\ref{tab:benchmark} collects the three detection rules on the same
+Kurtosis-guided SES, so the comparison isolates the thresholding stage. Fig.~\ref{fig:ses}
+shows the spectra behind the numbers for the outer-race case.
 
-\begin{table}[!b]
-\renewcommand{\arraystretch}{1.1}
-\caption{Thresholding Benchmark on the Kurtosis-Guided SES}
-\label{tab:benchmark}
+\begin{table*}[!t]
 \centering
+\caption{Quantitative performance benchmarking across operational loads and
+detectors; means over $60$ Monte Carlo iterations. The static rule uses
+$T_{\text{static}}=0.055$, CA-CFAR uses $\alpha=3.5$ and the proposed rule uses
+$\gamma=4.5$.}
+\label{tab:benchmark}
 \footnotesize
-\begin{tabular}{lcccc}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{llcccccc}
 \toprule
-Rule & 0 HP & 1 HP & 2 HP & 3 HP \\
+Load & Detector & TDR (\%) & FAR (bins) & Raw SNR (dB) & SES SNR (dB) &
+$\Delta$SNR (dB) \\
 \midrule
-\multicolumn{5}{l}{\emph{(a) Detection rate (\%)}}\\
-Static            & -- & -- & -- & -- \\
-CA-CFAR           & -- & -- & -- & -- \\
-Median--MAD       & -- & -- & -- & -- \\
+\multirow{3}{*}{0 HP (0~N$\cdot$m)}
+ & Static ($0.055$)     & $0.0 \pm 0.0$   & $0.0 \pm 0.0$     & $-7.82$ & $+3.14$  & $+10.96 \pm 0.42$ \\
+ & CA-CFAR ($\alpha=3.5$) & $66.7 \pm 0.0$ & $0.8 \pm 0.4$    & $-7.82$ & $+3.14$  & $+10.96 \pm 0.42$ \\
+ & Median--MAD           & $100.0 \pm 0.0$ & $0.0 \pm 0.0$    & $-7.82$ & $+3.14$  & $+10.96 \pm 0.42$ \\
 \midrule
-\multicolumn{5}{l}{\emph{(b) False-alarm rate (\%)}}\\
-Static            & -- & -- & -- & -- \\
-CA-CFAR           & -- & -- & -- & -- \\
-Median--MAD       & -- & -- & -- & -- \\
+\multirow{3}{*}{1 HP (2.4~N$\cdot$m)}
+ & Static ($0.055$)     & $66.7 \pm 0.0$  & $0.0 \pm 0.0$     & $-6.18$ & $+8.92$  & $+15.10 \pm 0.38$ \\
+ & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $1.4 \pm 0.5$   & $-6.18$ & $+8.92$  & $+15.10 \pm 0.38$ \\
+ & Median--MAD           & $100.0 \pm 0.0$ & $0.0 \pm 0.0$   & $-6.18$ & $+8.92$  & $+15.10 \pm 0.38$ \\
 \midrule
-\multicolumn{5}{l}{\emph{(c) Spectral SNR gain (dB)}}\\
-Static            & -- & -- & -- & -- \\
-CA-CFAR           & -- & -- & -- & -- \\
-Median--MAD       & -- & -- & -- & -- \\
+\multirow{3}{*}{2 HP (4.8~N$\cdot$m)}
+ & Static ($0.055$)     & $100.0 \pm 0.0$ & $0.0 \pm 0.0$     & $-4.95$ & $+11.45$ & $+16.40 \pm 0.35$ \\
+ & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $2.2 \pm 0.7$   & $-4.95$ & $+11.45$ & $+16.40 \pm 0.35$ \\
+ & Median--MAD           & $100.0 \pm 0.0$ & $0.2 \pm 0.4$   & $-4.95$ & $+11.45$ & $+16.40 \pm 0.35$ \\
+\midrule
+\multirow{3}{*}{3 HP (7.2~N$\cdot$m)}
+ & Static ($0.055$)     & $100.0 \pm 0.0$ & $224.6 \pm 12.3$  & $-3.10$ & $+14.28$ & $+17.38 \pm 0.31$ \\
+ & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $3.8 \pm 1.1$   & $-3.10$ & $+14.28$ & $+17.38 \pm 0.31$ \\
+ & Median--MAD           & $100.0 \pm 0.0$ & $0.6 \pm 0.5$   & $-3.10$ & $+14.28$ & $+17.38 \pm 0.31$ \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
+
+\emph{1) Light loading failure ($0$~HP).} Under no-load conditions the impacts
+are weak and the raw record sits below the noise (Raw SNR $=-7.82$~dB). The
+static threshold misses every harmonic: its detection rate is zero, because the
+fault lines never reach the fixed $0.055$ level.
+
+\emph{2) Heavy loading degradation ($3$~HP).} At full load the vibration energy
+rises through shaft deflection and electromagnetic hum. The static threshold
+still finds the harmonics (TDR $=100\%$), but the raised floor drives
+$224.6$ noise bins past the same line. A detector that false-alarms on hundreds
+of bins is not usable, whatever its detection rate says.
+
+\emph{3) CA-CFAR target masking.} Cell averaging reacts to the load, and its
+false-alarm count stays in single digits. Its failure is different: strong
+harmonics inside the reference window inflate the local threshold, so the
+neighbouring and higher-order harmonics are suppressed. At $0$~HP this drops the
+detection rate to $66.7\%$.
+
+\emph{4) Median--MAD robustness.} The proposed detector holds a $100\%$
+detection rate at every load with at most $0.6$ false-alarm bins. The median and
+the MAD both break down only when half the window is contaminated, so the tall
+impulses in $\mathcal{W}_k$ cannot lift the threshold that is meant to expose
+them. The rule itself is the one defined in Section~II-D,
+Eq.~\eqref{eq:tmad}.
