@@ -1,0 +1,62 @@
+% ===========================================================================
+% Section III -- Experimental Setup and Datasets
+% Owner: Member 1
+% ===========================================================================
+\subsection{Bearing Kinematics}
+For a bearing with $n_b$ rolling elements of diameter $d$, pitch diameter $D$
+and contact angle $\alpha$, define the diameter ratio
+$\rho=(d/D)\cos\alpha$. The theoretical fault frequencies at shaft rate $f_r$
+are then
+\begin{equation}
+\begin{aligned}
+  f_{\text{BPFO}} &= \frac{n_b}{2}f_r\left(1-\rho\right), &
+  f_{\text{BPFI}} &= \frac{n_b}{2}f_r\left(1+\rho\right),\\
+  f_{\text{BSF}} &= \frac{D}{2d}f_r\left(1-\rho^{2}\right), &
+  f_{\text{FTF}} &= \frac{f_r}{2}\left(1-\rho\right).
+\end{aligned}
+  \label{eq:kinematics}
+\end{equation}
+Table~\ref{tab:kinematics} lists the values for the drive-end 6205-2RS JEM
+SKF bearing used in the CWRU test rig ($n_b=9$, $d=0.3126$~in, $D=1.537$~in,
+$\alpha=0^\circ$) at the four motor loads.
+
+\begin{table}[!t]
+\renewcommand{\arraystretch}{1.15}
+\caption{CWRU Drive-End Bearing Characteristic Frequencies}
+\label{tab:kinematics}
+\centering
+\footnotesize
+\begin{tabular}{lccccc}
+\toprule
+Load & $f_r$ (Hz) & BPFO & BPFI & BSF & FTF \\
+     &            & \multicolumn{4}{c}{(Hz)} \\
+\midrule
+0 HP (1797 rpm) & 29.95 & 107.36 & 162.18 & 70.58 & 11.93 \\
+1 HP (1772 rpm) & 29.53 & 105.86 & 159.92 & 69.60 & 11.76 \\
+2 HP (1750 rpm) & 29.17 & 104.56 & 157.94 & 68.74 & 11.62 \\
+3 HP (1730 rpm) & 28.83 & 103.36 & 156.14 & 67.95 & 11.48 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Datasets}
+The framework is evaluated on two public benchmarks.
+\emph{CWRU:} the Case Western Reserve University Bearing Data Center records
+accelerometer signals at $f_s=12$~kHz and $48$~kHz for motor loads of
+$0$, $1$, $2$ and $3$~HP, with artificially seeded outer-race, inner-race and
+ball defects of $7$, $14$ and $21$~mil~\cite{smith2015}. \emph{MFPT:} the
+Machinery Failure Prevention Technology dataset provides a fixed-shaft-speed
+bearing with $f_s=48.828$~kHz under seven radial load levels from $25$~lbs to
+$300$~lbs, which stresses radial-load invariance rather than shaft-speed
+variation.
+
+\subsection{Pipeline Parameters}
+Unless stated otherwise the experiments use $f_s=12$~kHz, a $4^{\text{th}}$
+order Butterworth bandpass realised in cascade SOS form with forward--backward
+filtering, an FFT length $N=4096$ (giving $\Delta f = 2.93$~Hz) with a Hann
+window and coherent-gain calibration, guard bins $N_G=4$, $N_R=25$ reference
+bins per side, $\alpha=3.5$ for CA-CFAR and $\gamma=4.5$ for the Median--MAD
+rule. The static reference threshold is calibrated
+once on the $0$~HP record at a $1\%$ false-alarm rate and then held fixed, so
+that any change in its performance across loads is attributable to the load
+itself.

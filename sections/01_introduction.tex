@@ -1,0 +1,52 @@
+% ===========================================================================
+% Section I -- Introduction
+% Owner: Member 1
+% ===========================================================================
+\IEEEPARstart{R}{olling} element bearings are the most frequent cause of
+failure in rotating machinery, and a large fraction of industrial maintenance
+cost is spent on their inspection. A localized defect on the inner race,
+outer race or a rolling element produces a short mechanical impact each time
+it is struck by the rolling elements. Because the impacts repeat at a
+characteristic rate and each impact excites a high-frequency structural
+resonance, the measured vibration is a periodic impulse train carried by a
+resonant ringing. The diagnostic information therefore resides in the
+\emph{repetition rate} of the impacts, not in the raw waveform, and it is
+recovered by demodulating the resonance -- the principle behind envelope
+analysis~\cite{randall2011,kim2020}.
+
+Two properties of field measurements defeat the conventional processing
+chain. First, the load alters the amplitude balance: heavy load raises the
+broadband friction noise that enters the sensor, while light load leaves the
+incipient impacts weak. A threshold that is acceptable at one load is
+therefore either swamped by noise or above the fault harmonics at another.
+Second, load changes the kinematics: cage and ball slip displace the true
+fault frequency by roughly $\pm 1$--$2\%$ from the value predicted by the
+bearing geometry, so a detector that tests a single spectral bin can lose the
+harmonic entirely. Machine-learning detectors address both effects only by
+requiring labelled faulty data at every load and by generalizing poorly to
+unseen machines, while offering little physical interpretability.
+
+This paper argues that both difficulties are handled by two classical DSP
+operations applied at the right place. The filter band is chosen by
+kurtosis, which measures impulsiveness and therefore locates the resonance
+excited by the defect~\cite{antoni2007}; the decision threshold is estimated
+\emph{locally} in the envelope spectrum with an order statistic, which is
+insensitive to the impulsive outliers that corrupt a moving average. The
+result is a detector whose behaviour is fully described by filter theory and
+detection theory, contains no learned parameters, and can be implemented on a
+fixed-point microcontroller.
+
+The contributions of this paper are:
+\begin{itemize}
+  \item a Kurtosis-guided resonance band selection procedure embedded in a
+        cascade-SOS zero-phase Butterworth filter, compared against a
+        linear-phase Kaiser FIR design on the basis of pole--zero location,
+        magnitude response and group delay;
+  \item a Hilbert squared-envelope demodulator with calibrated Hann-windowed
+        FFT, in which squaring is shown by the modulation theorem to shift the
+        resonance to baseband without the intermodulation produced by a
+        square-root envelope;
+  \item a Median--MAD CFAR threshold that tracks the load-dependent noise
+        floor, with a slip-tolerant harmonic comb, evaluated against static
+        thresholding and cell-averaging CFAR on multi-load data.
+\end{itemize}

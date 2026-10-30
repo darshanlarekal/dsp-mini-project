@@ -1,0 +1,32 @@
+% ===========================================================================
+% Section II-A -- Continuous-to-Discrete Fault Signal Model
+% Owner: Member 1
+% ===========================================================================
+\subsection{Continuous-to-Discrete Fault Signal Model}
+Let the vibration be sampled at $f_s = 1/T_s$ with $f_s > 2f_{\max}$, so that
+the Nyquist criterion is satisfied and no aliasing folds the resonance band
+onto the diagnostic band. The discrete signal is modelled as a train of
+impulses convolved with the causal structural impulse response and corrupted
+by additive broadband noise:
+\begin{equation}
+  x[n] = \sum_{m=-\infty}^{\infty} A_m\, h[n - mN_p - \tau_m] + w[n],
+  \label{eq:model}
+\end{equation}
+where $N_p = f_s/f_{\text{fault}}$ is the nominal discrete fault period,
+$\tau_m$ models the load-induced random slip, $w[n]$ is the background noise,
+and
+\begin{equation}
+  h[n] = e^{-\sigma nT_s}\cos(\omega_r n)\,u[n]
+  \label{eq:ir}
+\end{equation}
+is a causal, BIBO-stable underdamped resonance. In the $z$-plane, $h[n]$
+corresponds to a complex-conjugate pole pair
+\begin{equation}
+  z_{1,2} = r e^{\pm j\omega_r}, \qquad r = e^{-\sigma T_s} < 1,
+  \label{eq:poles}
+\end{equation}
+so stability follows from $|z_{1,2}|<1$. Equation~\eqref{eq:model} makes the
+central point of the paper explicit: the fault signature $A_m$ is a
+\emph{low-frequency modulation} of a \emph{high-frequency carrier}
+$\omega_r$, and the two are separated by demodulation rather than by direct
+spectral inspection.

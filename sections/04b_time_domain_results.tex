@@ -1,0 +1,24 @@
+% ===========================================================================
+% Section IV-B -- Time-Domain Progression
+% Owner: Member 2
+% ===========================================================================
+\subsection{Time-Domain Progression}
+Fig.~\ref{fig:timedomain} shows the three stages of the pipeline on a short
+segment. The raw record is dominated by low-frequency shaft components and
+broadband noise, in which the impacts are not visually separable. After the
+Kurtosis-guided zero-phase bandpass the resonance ringing of each impact
+becomes visible as a burst, and after the Hilbert transform the envelope
+exposes the repetition period directly: the spacing between successive maxima
+equals $1/f_{\text{BPFO}}$, which is the quantity the SES resolves in the
+frequency domain.
+
+\begin{figure}[!t]
+\centering
+% \includegraphics[width=\columnwidth]{Fig2_Time_Domain.pdf}
+\figbox{4.8cm}{\columnwidth}{\texttt{Fig2\_Time\_Domain.pdf}\\[2pt]
+(a) raw vibration, (b) zero-phase bandpass output, (c) Hilbert envelope with
+the BPFO repetition period marked.}
+\caption{Time-domain progression from the raw record to the demodulated
+envelope.}
+\label{fig:timedomain}
+\end{figure}

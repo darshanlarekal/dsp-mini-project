@@ -1,0 +1,22 @@
+% ===========================================================================
+% Section V -- Conclusion and Hardware Feasibility
+% Owner: Member 4
+% ===========================================================================
+This paper presented a pure-DSP framework for load-invariant bearing fault
+detection that combines Kurtosis-guided zero-phase bandpass filtering,
+Hilbert squared-envelope demodulation and Median--MAD adaptive spectral
+thresholding. Filter design, demodulation and detection are each traceable to
+a single classical result -- the bilinear transform with pre-warping, the
+modulation theorem, and the order-statistic robustness of the median -- so the
+detector contains no learned parameters and behaves predictably as the load
+changes.
+
+The same structure suits embedded realisation. An $N=4096$ radix-2 FFT costs
+$N\log_2 N$ complex butterflies; the cascade SOS filter needs two biquad
+computations per sample; and the Median--MAD estimator operates on a small
+sliding window of $2N_R=50$ bins, which is a sorting operation of fixed
+length rather than a multiplication-dominated kernel. In $16$-bit fixed-point
+arithmetic the expected signal-to-quantization-noise ratio of the datapath is
+$\text{SQNR}\approx 6.02B+1.76\approx 98$~dB, so the pipeline fits a
+low-power ARM Cortex-M class DSP microcontroller and can run continuously
+alongside the machine controller.

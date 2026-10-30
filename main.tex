@@ -1,0 +1,112 @@
+\documentclass[journal]{IEEEtran}
+%
+% ---------------------------------------------------------------------------
+% ED5017 DSP Mini-Project -- IEEE journal manuscript
+% Compile:  tectonic -X compile main.tex
+% Figures are placeholders on purpose: drop Fig1_Filter_Design.pdf,
+% Fig2_Time_Domain.pdf and Fig3_MultiLoad_SES_Thresholding.png into the
+% project root (or ./figures/) and uncomment the matching \includegraphics.
+% ---------------------------------------------------------------------------
+
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{newtxtext,newtxmath}
+
+\graphicspath{{./}{./figures/}}
+
+\hyphenation{op-tical net-works semi-conduc-tor kur-to-sis en-ve-lope}
+
+% Placeholder box: \figbox{height}{width}{caption text}
+\newcommand{\figbox}[3]{%
+  \setlength{\fboxsep}{6pt}%
+  \setlength{\fboxrule}{0.4pt}%
+  \fbox{\parbox[c][#1][c]{\dimexpr#2-2\fboxsep-2\fboxrule\relax}%
+    {\centering\footnotesize\itshape #3}}}
+
+\begin{document}
+
+\title{Adaptive Spectral Thresholding via Kurtosis-Guided Squared Envelope
+Analysis for Load-Invariant Bearing Fault Detection}
+
+\author{Member~1, Member~2, Member~3, and Member~4%
+\thanks{Manuscript submitted for the ED5017 Digital Signal Processing
+Mini-Project. The authors are with the Department of Engineering.}}
+
+\markboth{ED5017 DSP Mini-Project}%
+{Adaptive Spectral Thresholding for Bearing Fault Detection}
+
+\maketitle
+
+\begin{abstract}
+Rolling element bearing diagnostics rely on envelope spectrum analysis to
+extract the periodic impulse rates produced by localized surface defects.
+In industrial operation, however, variable mechanical load alters the shaft
+slip, the structural damping and the broadband noise floor, so that fixed
+bandpass filters and static spectral thresholds exhibit high false-alarm
+rates under heavy load and missed detections under light load. This paper
+presents a training-free pure Digital Signal Processing (DSP) framework that
+combines Kurtosis-guided resonance demodulation with local noise-floor
+adaptive thresholding in the Squared Envelope Spectrum (SES). Cascade
+second-order-section (SOS) zero-phase IIR filtering, discrete Hilbert
+transform demodulation, Hann-windowed Fast Fourier Transform (FFT) and
+order-statistic Median--Median Absolute Deviation (Median--MAD) Constant
+False Alarm Rate (CFAR) thresholding allow the detector to track load-induced
+noise-floor shifts and shaft slip automatically. The processing chain is
+mathematically interpretable, requires no training data, and is sized for
+fixed-point embedded implementation; it is applied here to the multi-load
+CWRU and MFPT bearing benchmarks.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Bearing fault diagnosis, Squared Envelope Spectrum (SES), Hilbert transform,
+spectral kurtosis, IIR/FIR filter design, CFAR, Median--MAD adaptive
+thresholding.
+\end{IEEEkeywords}
+
+% ===========================================================================
+% DOCUMENT SKELETON -- section order and ownership.
+% Each \input lives in ./sections/. Section headings stay here so that the
+% global order is readable; the files hold the prose, equations, figures and
+% tables. Compile with:  tectonic -X compile main.tex
+% ===========================================================================
+
+% ---------------------------------------------------------------------------
+\section{Introduction}                                   % Member 1
+% ---------------------------------------------------------------------------
+\input{sections/01_introduction}
+
+% ---------------------------------------------------------------------------
+\section{Signal Model and Theoretical DSP Framework}
+% ---------------------------------------------------------------------------
+\input{sections/02a_signal_model}                        % Member 1
+\input{sections/02b_filter_design}                       % Member 2
+\input{sections/02c_envelope_spectrum}                   % Member 3
+\input{sections/02d_adaptive_thresholding}               % Member 3
+
+% ---------------------------------------------------------------------------
+\section{Experimental Setup and Datasets}                % Member 1
+% ---------------------------------------------------------------------------
+\input{sections/03_experimental_setup}
+
+% ---------------------------------------------------------------------------
+\section{Results and Discussion}
+% ---------------------------------------------------------------------------
+\input{sections/04a_filter_results}                      % Member 2
+\input{sections/04b_time_domain_results}                 % Member 2
+\input{sections/04c_multiload_results}                   % Member 3
+\input{sections/04d_benchmark}                           % Member 4
+
+% ---------------------------------------------------------------------------
+\section{Conclusion and Hardware Feasibility}            % Member 4
+% ---------------------------------------------------------------------------
+\input{sections/05_conclusion}
+
+\input{sections/backmatter}
+\input{sections/references}
+
+\end{document}

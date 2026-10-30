@@ -1,0 +1,28 @@
+% ===========================================================================
+% Section IV-A -- Filter Design and Pole-Zero Analysis
+% Owner: Member 2
+% ===========================================================================
+\subsection{Filter Design and Pole--Zero Analysis}
+Fig.~\ref{fig:filters} compares the two candidate filters. The pole--zero map
+confirms that the SOS denominator places a conjugate pair just inside the unit
+circle, at radius $r=e^{-\sigma T_s}$ set by the selected band, while the
+zeros sit on the unit circle at the band edges: the stopband is therefore
+exact at DC and at Nyquist and the passband is stable by construction. The
+magnitude responses of the Kaiser FIR and the Butterworth IIR are comparable
+within the selected band, but differ in the transition region, where the FIR
+length sets the slope. The group-delay panel is the decisive comparison: the
+linear-phase FIR delays all frequencies equally, the causal IIR delays them
+unequally, and forward--backward filtering removes both, which is the reason
+the zero-phase SOS structure is used for impulse preservation.
+
+\begin{figure}[!t]
+\centering
+% \includegraphics[width=\columnwidth]{Fig1_Filter_Design.pdf}
+\figbox{4.8cm}{\columnwidth}{\texttt{Fig1\_Filter\_Design.pdf}\\[2pt]
+(a) $z$-plane pole--zero map, (b) $|H(e^{j\omega})|$ for the Kaiser FIR and
+the Butterworth SOS IIR, (c) group delay of both filters and of the zero-phase
+cascade.}
+\caption{Filter design: pole--zero map, magnitude response and group delay of
+the Kaiser FIR and the $4^{\text{th}}$-order Butterworth SOS bandpass.}
+\label{fig:filters}
+\end{figure}

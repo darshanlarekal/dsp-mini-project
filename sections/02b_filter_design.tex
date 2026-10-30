@@ -1,0 +1,70 @@
+% ===========================================================================
+% Section II-B -- Pre-Processing and Kurtosis-Guided Bandpass Filter Design
+% Owner: Member 2
+% ===========================================================================
+\subsection{Pre-Processing and Kurtosis-Guided Bandpass Filter Design}
+\emph{1) Mean removal.} The sensor signal contains a DC offset from the
+accelerometer bias and the static gravity component. Subtracting the sample
+mean
+\begin{equation}
+  x_0[n] = x[n] - \frac{1}{N}\sum_{m=0}^{N-1}x[m]
+  \label{eq:dc}
+\end{equation}
+prevents the zero-frequency bin from dominating the spectrum and from leaking
+into the low-frequency region where the fault harmonics lie.
+
+\emph{2) Sub-band kurtosis selection.} The resonance frequency $\omega_r$ is
+not known a priori. A filter bank of $B$ bands of width $\Delta\omega$
+spanning $[0,f_s/2]$ is applied to $x_0[n]$, and the normalized fourth-order
+moment
+\begin{equation}
+  K_y = \frac{\mathbb{E}\{(y-\mu_y)^4\}}{\left(\mathbb{E}\{(y-\mu_y)^2\}\right)^2}
+  \label{eq:kurt}
+\end{equation}
+is evaluated at the output of each band. A Gaussian noise band yields
+$K_y\approx 3$; a band containing the impulse-excited resonance yields
+$K_y>3$ because the impacts are rare and large. The band with maximum $K_y$
+defines $[\omega_{p1},\omega_{p2}]$ and hence the demodulation carrier.
+
+\emph{3) Filter design.} Two designs are compared. The linear-phase Type-I
+Kaiser-windowed FIR filter of length $L$ has
+\begin{equation}
+  h_{\text{FIR}}[n] = h_{\text{ideal}}[n]\,w_{\text{Kaiser}}[n],\quad
+  w_{\text{Kaiser}}[n] = \frac{I_0\!\left(\beta\sqrt{1-\tilde{n}^2}\right)}{I_0(\beta)},
+  \label{eq:kaiser}
+\end{equation}
+where $\tilde{n}=2n/(L-1)-1$ is a normalized index and the shape parameter
+$\beta$ trades transition width against stopband attenuation.
+The alternative is a $4^{\text{th}}$-order Butterworth bandpass, obtained by
+the bilinear transform
+\begin{equation}
+  s = \frac{2}{T_s}\,\frac{1-z^{-1}}{1+z^{-1}},
+  \label{eq:bilinear}
+\end{equation}
+with the analog band edges pre-warped according to
+$\Omega = \frac{2}{T_s}\tan(\omega/2)$ so that the digital cutoff lands
+exactly on the specified frequency.
+
+\emph{4) Cascade SOS realisation.} A high-order transfer function evaluated in
+direct form suffers from coefficient quantization: small perturbations of the
+denominator coefficients move the poles of~\eqref{eq:poles}, and for narrow
+bands the filter can even become unstable in finite precision. The design is
+therefore factored into second-order sections,
+\begin{equation}
+  H(z) = g\prod_{i=1}^{K}\frac{b_{0i}+b_{1i}z^{-1}+b_{2i}z^{-2}}
+                          {1+a_{1i}z^{-1}+a_{2i}z^{-2}},
+  \label{eq:sos}
+\end{equation}
+each of which keeps its own pole pair well conditioned.
+
+\emph{5) Zero-phase filtering.} Because the diagnostic decision depends on the
+\emph{time} of each impulse, the filter must not disperse the transients.
+Forward--backward filtering applies $H(z)$ and then $H(z^{-1})$,
+\begin{equation}
+  Y_{\text{BP}}(z) = H(z)H(z^{-1})X(z)
+  \;\Longrightarrow\;
+  \left|H(e^{j\omega})\right|^2 e^{-j0},
+  \label{eq:filtfilt}
+\end{equation}
+which squares the magnitude response and cancels the phase, so the group delay
+is exactly zero and the impulse positions are preserved.

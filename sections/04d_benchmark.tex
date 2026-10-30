@@ -1,0 +1,42 @@
+% ===========================================================================
+% Section IV-D -- Quantitative Benchmark
+% Owner: Member 4
+% ===========================================================================
+\subsection{Quantitative Benchmark}
+Table~\ref{tab:benchmark} reports the three detection rules on the same
+Kurtosis-guided SES, so that the comparison isolates the thresholding stage.
+Spectral SNR gain is defined as the ratio of the mean comb peak to the median
+out-of-comb floor in dB, the detection rate is the fraction of segments in
+which all three harmonics are declared present, and the false-alarm rate is
+the fraction of out-of-comb bins that exceed the threshold. The static rule
+is expected to trade false alarms at heavy load against missed detections at
+light load, CA-CFAR to lose detections through target masking, and the
+proposed rule to hold a near-constant false-alarm rate across the load sweep.
+
+\begin{table}[!t]
+\renewcommand{\arraystretch}{1.1}
+\caption{Thresholding Benchmark on the Kurtosis-Guided SES}
+\label{tab:benchmark}
+\centering
+\footnotesize
+\begin{tabular}{lcccc}
+\toprule
+Rule & 0 HP & 1 HP & 2 HP & 3 HP \\
+\midrule
+\multicolumn{5}{l}{\emph{(a) Detection rate (\%)}}\\
+Static            & -- & -- & -- & -- \\
+CA-CFAR           & -- & -- & -- & -- \\
+Median--MAD       & -- & -- & -- & -- \\
+\midrule
+\multicolumn{5}{l}{\emph{(b) False-alarm rate (\%)}}\\
+Static            & -- & -- & -- & -- \\
+CA-CFAR           & -- & -- & -- & -- \\
+Median--MAD       & -- & -- & -- & -- \\
+\midrule
+\multicolumn{5}{l}{\emph{(c) Spectral SNR gain (dB)}}\\
+Static            & -- & -- & -- & -- \\
+CA-CFAR           & -- & -- & -- & -- \\
+Median--MAD       & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

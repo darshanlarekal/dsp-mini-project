@@ -1,0 +1,96 @@
+% ===========================================================================
+% Section II-D -- Local Noise-Floor Adaptive Spectral Thresholding
+% Owner: Member 3
+% ===========================================================================
+\subsection{Local Noise-Floor Adaptive Spectral Thresholding}
+In real industrial machinery, changing radial and axial motor loads alter the
+broadband friction noise floor in $\text{SES}[k]$ in two opposite ways. Under
+light load (e.g., $0$~HP), the low contact force between the rolling elements
+and the raceways produces weak impact modulation, so a fixed threshold set for
+normal operation sits too high and misses the weak fault peaks, giving false
+negatives. Under heavy load (e.g., $3$~HP), the increased mechanical friction
+elevates the entire broadband floor, and a fixed threshold is breached by
+random noise spikes across dozens of bins, giving severe false alarms.
+
+To obtain automated, training-free and load-invariant detection, a
+sliding-window Constant False Alarm Rate (CFAR) threshold is applied across the
+frequency bins $k$ of the SES. For every test bin $k$ the local sliding window
+has two regions. The guard band consists of $N_G$ bins immediately to the left
+($[k-N_G,\,k-1]$) and to the right ($[k+1,\,k+N_G]$) of bin $k$, which are
+excluded from the noise estimate. Since the Hann window has a mainlobe width of
+four bins, $N_G=4$ is sufficient to stop energy from a fault peak at bin $k$
+from spilling into the noise window and biasing its own background estimate.
+Beyond the guard band, $N_R=25$ reference bins are collected on each side,
+giving $2N_R$ bins in the reference window
+\begin{equation}
+\begin{aligned}
+  \mathcal{W}_k=\big\{\text{SES}[m]\;\big|\;&
+  m\in[k-N_G-N_R,\,k-N_G-1]\\
+  &\cup[k+N_G+1,\,k+N_G+N_R]\big\}.
+\end{aligned}
+  \label{eq:window}
+\end{equation}
+Two local statistical estimators are compared over $\mathcal{W}_k$.
+
+\subsubsection{Cell-Averaging CFAR}
+Treating the reference window as a local moving-average filter, CA-CFAR
+estimates the local noise floor from the sample mean of the reference bins,
+\begin{equation}
+  \hat{\mu}[k]=\frac{1}{2N_R}\sum_{x\in\mathcal{W}_k}x,
+  \qquad T_{\text{CFAR}}[k]=\alpha\,\hat{\mu}[k],
+  \label{eq:cacfar}
+\end{equation}
+with the constant threshold multiplier $\alpha=3.5$. CA-CFAR scales with
+broadband load changes, but in bearing spectra it suffers from harmonic target
+masking: whenever bin $k$ is close to a tall shaft harmonic ($1\times$,
+$2\times$ RPM) or to a neighbouring fault harmonic, that spike enters
+$\mathcal{W}_k$, and because a sample mean is fully sensitive to outliers, a
+single tall harmonic inflates $\hat{\mu}[k]$ and drives $T_{\text{CFAR}}[k]$
+upward immediately beside a real fault.
+
+\subsubsection{Proposed Order-Statistic Median--MAD Threshold}
+To eliminate harmonic self-masking, the sample mean and standard deviation are
+replaced by order statistics, namely the local median $\hat{m}[k]$ and the
+Median Absolute Deviation $\text{MAD}[k]$:
+\begin{equation}
+\begin{aligned}
+  \hat{m}[k] &= \operatorname{median}\left(\mathcal{W}_k\right),\\
+  \text{MAD}[k] &= \operatorname{median}\left(\left|\mathcal{W}_k-\hat{m}[k]\right|\right).
+\end{aligned}
+  \label{eq:medmad}
+\end{equation}
+For Gaussian background noise the robust local scale is recovered from the MAD
+with the normal-consistency factor $1.4826$,
+\begin{equation}
+  \hat{\sigma}_{\text{local}}[k]=1.4826\,\text{MAD}[k],
+  \label{eq:madscale}
+\end{equation}
+and the adaptive threshold at bin $k$ is
+\begin{equation}
+  T_{\text{MAD}}[k]=\hat{m}[k]+\gamma\left(1.4826\,\text{MAD}[k]\right),
+  \label{eq:tmad}
+\end{equation}
+where $\gamma=4.5$ sets the number of robust standard deviations above the
+local median floor. Because the breakdown point of the median is $50\%$, up to
+half of the bins in $\mathcal{W}_k$ can be contaminated by tall shaft or fault
+harmonics without corrupting $T_{\text{MAD}}[k]$, so the threshold hugs the
+true background floor across the whole load range from $0$~HP to $3$~HP.
+
+\subsubsection{Slip-Tolerant Harmonic Comb}
+Under heavy radial load the rolling elements skid slightly, by $\pm1$--$2\%$,
+so the measured fault frequency drifts from the kinematic prediction. The
+detector therefore does not test a single DFT bin. For every candidate fault
+frequency $f_{\text{fault}}\in\{f_{\text{BPFO}},f_{\text{BPFI}},f_{\text{BSF}}\}$
+and harmonic order $h\in\{1,2,3\}$ it searches the slip-tolerant band of
+relative half-width $\delta_{\text{slip}}=1.5\%$,
+\begin{equation}
+  \mathcal{B}_h=\left[hf_{\text{fault}}(1-\delta_{\text{slip}}),\;
+  hf_{\text{fault}}(1+\delta_{\text{slip}})\right],
+  \label{eq:comb}
+\end{equation}
+and confirms harmonic $h$ automatically when the largest spectral excess inside
+that band is positive,
+\begin{equation}
+  \max_{f_k\in\mathcal{B}_h}\left(\text{SES}[k]-T_{\text{MAD}}[k]\right) > 0.
+  \label{eq:decision}
+\end{equation}
