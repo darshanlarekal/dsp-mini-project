@@ -13,7 +13,7 @@ elevates the entire broadband floor, and a fixed threshold is breached by
 random noise spikes across dozens of bins, giving severe false alarms.
 
 To obtain automated, training-free and load-invariant detection, a
-sliding-window Constant False Alarm Rate (CFAR) threshold is applied across the
+sliding-window Constant False Alarm Rate (CFAR) threshold~\cite{richards} is applied across the
 frequency bins $k$ of the SES. For every test bin $k$ the local sliding window
 has two regions. The guard band consists of $N_G$ bins immediately to the left
 ($[k-N_G,\,k-1]$) and to the right ($[k+1,\,k+N_G]$) of bin $k$, which are
@@ -71,7 +71,7 @@ and the adaptive threshold at bin $k$ is
   \label{eq:tmad}
 \end{equation}
 where $\gamma=4.5$ sets the number of robust standard deviations above the
-local median floor. Because the breakdown point of the median is $50\%$, up to
+local median floor. Because the breakdown point of the median is $50\%$~\cite{huber}, up to
 half of the bins in $\mathcal{W}_k$ can be contaminated by tall shaft or fault
 harmonics without corrupting $T_{\text{MAD}}[k]$, so the threshold hugs the
 true background floor across the whole load range from $0$~HP to $3$~HP.
