@@ -24,8 +24,8 @@ theoretical limit is
   \label{eq:sqnr}
 \end{equation}
 so the implementation lands about $14$~dB below the ideal figure. That gap is
-normal. The filter and the FFT add their own round-off on top of the ADC
-quantization, and the two together account for the difference. The residual
+normal. The filter and the FFT add round-off of their own on top of the ADC
+quantization, and both are counted alongside it. The residual
 $e_q[n]=y_{\text{float}}[n]-y_{Q15}[n]$ is zero-mean and white, with no tonal
 component, and the Q$1.15$ envelope spectrum cannot be told apart from the
 double-precision reference. Sixteen bits keep the diagnostic information
