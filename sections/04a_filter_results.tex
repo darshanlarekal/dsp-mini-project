@@ -1,28 +1,74 @@
 % ===========================================================================
-% Section IV-A -- Filter Design and Pole-Zero Analysis
+% Section IV-A -- Filter Architecture and Pole-Zero Stability Analysis
 % Owner: Member 2
 % ===========================================================================
-\subsection{Filter Design and Pole--Zero Analysis}
-Fig.~\ref{fig:filters} compares the two candidate filters. The pole--zero map
-confirms that the SOS denominator places a conjugate pair just inside the unit
-circle, at radius $r=e^{-\sigma T_s}$ set by the selected band, while the
-zeros sit on the unit circle at the band edges: the stopband is therefore
-exact at DC and at Nyquist and the passband is stable by construction. The
-magnitude responses of the Kaiser FIR and the Butterworth IIR are comparable
-within the selected band, but differ in the transition region, where the FIR
-length sets the slope. The group-delay panel is the decisive comparison: the
-linear-phase FIR delays all frequencies equally, the causal IIR delays them
-unequally, and forward--backward filtering removes both, which is the reason
-the zero-phase SOS structure is used for impulse preservation.
+\subsection{Filter Architecture and Pole--Zero Stability Analysis}
+To evaluate the frequency-domain selectivity, stability, and phase
+characteristics of the designed demodulation filters, the Sub-Band Kurtogram was
+first applied to the pre-processed $12$~kHz bearing vibration signal. Across the
+decomposition levels spanning $[0, 6000~\text{Hz}]$, the algorithm identified the
+optimal structural resonance band at center frequency $f_c^* = 3000.0$~Hz with
+bandwidth $BW^* = 2000.0$~Hz, corresponding to passband cutoff frequencies
+$f_{\text{low}} = 2000.0$~Hz and $f_{\text{high}} = 4000.0$~Hz. Within this
+passband, the sub-band time-domain Kurtosis reached a maximum value of
+$K = 4.58$, compared to a baseline Kurtosis of $K = 2.23$ in the broadband input
+signal.
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-% \includegraphics[width=\columnwidth]{Fig1_Filter_Design.pdf}
-\figbox{4.8cm}{\columnwidth}{\texttt{Fig1\_Filter\_Design.pdf}\\[2pt]
-(a) $z$-plane pole--zero map, (b) $|H(e^{j\omega})|$ for the Kaiser FIR and
-the Butterworth SOS IIR, (c) group delay of both filters and of the zero-phase
-cascade.}
-\caption{Filter design: pole--zero map, magnitude response and group delay of
-the Kaiser FIR and the $4^{\text{th}}$-order Butterworth SOS bandpass.}
-\label{fig:filters}
-\end{figure}
+\includegraphics[width=0.98\textwidth]{Fig1_Filter_PoleZero_Comparison.png}
+\caption{Comparison of the Type-I Kaiser-windowed FIR bandpass filter
+($M = 128$, $129$~taps, $\beta = 8.0$) and the $4^{\text{th}}$-order
+Butterworth Cascade SOS IIR bandpass filter across the Kurtosis-selected
+passband $[2000, 4000]$~Hz: (a) complex $z$-plane pole--zero plot verifying that
+all IIR poles lie strictly inside the unit circle ($r_{\max} = 0.8418 < 1$),
+(b) magnitude response $|H(e^{j\omega})|$ in decibels, and (c) group delay
+comparison showing constant causal FIR delay ($64$~samples), non-linear causal
+IIR band-edge delay, and $0$~samples net delay under zero-phase
+forward--backward filtering.}
+\label{fig:filter_comparison}
+\end{figure*}
+
+Using the selected $[2000, 4000]$~Hz passband, a Type-I Linear-Phase
+Kaiser-windowed FIR filter of order $M = 128$ ($L = 129$~taps, shape parameter
+$\beta = 8.0$) was compared against a $4^{\text{th}}$-order Butterworth IIR
+bandpass filter realized in Cascade Second-Order Sections (SOS) form
+($4$ biquad sections). Fig.~\ref{fig:filter_comparison} illustrates the
+resulting pole--zero geometry, magnitude response, and group delay
+characteristics.
+
+As shown in Fig.~\ref{fig:filter_comparison}(a), the Kaiser FIR filter exhibits
+zeros distributed along the stopband arcs of the unit circle to enforce sidelobe
+suppression, while all of its poles remain trivially at the origin ($z = 0$).
+For the $4^{\text{th}}$-order Butterworth IIR bandpass filter, the Bilinear
+Transform places four zeros at $z = 1$ ($\omega = 0$, DC blocking) and four
+zeros at $z = -1$ ($\omega = \pi$, Nyquist blocking), along with four
+complex-conjugate pole pairs ($8$ poles total) concentrated inside the passband
+arc. Crucially, the maximum pole radius of the Cascade SOS realization is
+$r_{\max} = 0.8418 < 1$. Because all poles lie strictly inside the unit circle,
+the causal region of convergence $|z| > 0.8418$ includes $|z| = 1$, confirming
+bounded-input bounded-output (BIBO) stability and strong immunity to
+finite-word-length coefficient quantization.
+
+Fig.~\ref{fig:filter_comparison}(b) compares the magnitude responses
+$|H(e^{j\omega})|$ of both architectures. Both filters provide a flat $0$~dB
+gain across the $[2000, 4000]$~Hz resonance band and strong attenuation in the
+low-frequency motor interference region ($0$--$1000$~Hz). While the $129$-tap
+Kaiser FIR filter achieves a steeper transition roll-off and stopband
+attenuation exceeding $-80$~dB, it requires $129$ multiply-accumulate (MAC)
+operations per output sample. In contrast, the $4$-section Cascade SOS
+Butterworth IIR filter achieves smooth, maximally flat passband selectivity
+using only $4 \times 5 = 20$ MAC operations per sample, reducing computational
+complexity by more than $84\%$.
+
+Fig.~\ref{fig:filter_comparison}(c) highlights the critical role of phase
+linearity and group delay in transient fault detection. In causal operation, the
+Type-I Kaiser FIR filter maintains a strictly constant group delay of
+$\tau_g = M/2 = 64$~samples across all frequencies, whereas the causal
+Butterworth IIR filter exhibits non-linear group delay peaks near the
+$2000$~Hz and $4000$~Hz passband edges due to the proximity of the transfer
+function poles to the unit circle. However, when implemented via zero-phase
+forward--backward filtering, the effective transfer function becomes
+$|H(e^{j\omega})|^2$, completely cancelling the phase term and yielding an
+identical group delay of $\tau_g(\omega) = 0$~samples across the entire
+spectrum.
