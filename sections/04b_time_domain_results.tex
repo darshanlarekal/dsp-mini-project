@@ -3,8 +3,8 @@
 % Owner: Member 2
 % ===========================================================================
 \subsection{Time-Domain Resonance Demodulation Progression}
-Fig.~\ref{fig:time_progression} demonstrates the step-by-step time-domain signal
-progression over a $100$~ms window ($1200$ samples at $f_s = 12$~kHz).
+Fig.~\ref{fig:time_progression} follows one segment through three stages, over
+$100$~ms ($1200$ samples at $12$~kHz).
 
 \begin{figure}[!t]
 \centering
@@ -19,29 +19,21 @@ bearing fault impulses.}
 \label{fig:time_progression}
 \end{figure}
 
-In Fig.~\ref{fig:time_progression}(a), the pre-processed vibration signal
-$x_0[n]$ is heavily dominated by high-amplitude, low-frequency sinusoidal
-oscillations originating from shaft rotation and structural motor hum, alongside
-additive broadband noise. Because the continuous low-frequency interference
-masks the short-duration bearing impacts, the waveform exhibits a low Kurtosis
-of $K = 2.23$ (below the Gaussian baseline of $3.0$), and individual fault
-strikes cannot be visually distinguished.
+In Fig.~\ref{fig:time_progression}(a) the zero-mean record is dominated by
+low-frequency shaft and motor oscillation, with broadband noise on top. At
+$107.36$~Hz the $100$~ms window holds about eleven impacts, yet the impacts are
+buried. The kurtosis is $2.23$, below the Gaussian value of $3.0$,
+and no individual strike can be picked out by eye.
 
-In Fig.~\ref{fig:time_progression}(b), passing $x_0[n]$ through the
-Kurtosis-guided zero-phase Cascade SOS Butterworth bandpass filter
-($[2000, 4000]$~Hz) completely eliminates the low-frequency motor roar. The
-resulting bandpass signal $y_{\text{BP}}[n]$ reveals a clean train of
-high-frequency, underdamped ringing bursts excited each time a rolling element
-strikes the outer-race defect. By stripping away the stationary low-frequency
-energy and preserving phase alignment via zero-phase filtering, the time-domain
-Kurtosis more than doubles from $K = 2.23$ to $K = 4.58$.
+In Fig.~\ref{fig:time_progression}(b) the signal has passed through the
+Kurtosis-guided zero-phase SOS filter for $[2000, 4000]$~Hz. The motor hum is
+gone. What remains is a train of underdamped bursts, one per impact on the outer
+race. Stripping the low-frequency energy and keeping the phase aligned raises
+the kurtosis from $2.23$ to $4.58$, more than double.
 
-Finally, Fig.~\ref{fig:time_progression}(c) overlays the magnitude of the complex
-analytic signal (the Hilbert envelope $|z[n]|$) directly onto the bandpass
-waveform $y_{\text{BP}}[n]$. The envelope smoothly traces the outer amplitude
-profile of each high-frequency resonant burst, converting the $3000$~Hz carrier
-oscillations into sharp, positive-valued periodic pulses spaced at intervals of
-$\Delta t \approx 9.31$~ms (corresponding to the outer-race fault frequency
-$f_{\text{BPFO}} = 107.36$~Hz). This high-contrast envelope signal provides an
-ideal input for subsequent Squared Envelope Spectrum (SES) transformation and
-adaptive spectral thresholding.
+Fig.~\ref{fig:time_progression}(c) overlays the Hilbert envelope $|z[n]|$ on the
+filtered waveform. The envelope follows the top of each burst, so the $3000$~Hz
+carrier becomes a sequence of positive pulses. Their spacing is
+$\Delta t \approx 9.31$~ms, which is $1/107.36$~Hz, the outer-race fault
+frequency. The spacing of the envelope peaks, not their height, carries the
+fault information here. That envelope is what the SES stage consumes.
