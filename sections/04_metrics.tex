@@ -3,19 +3,20 @@
 % Owner: Member 4
 % ===========================================================================
 \subsection{Evaluation Metrics}
-The evaluation uses the CWRU $2$~HP Reliance Electric rig with a dynamometer
+Four measures are computed on the SES: spectral SNR, true detection rate,
+false-alarm count and execution latency. Each is scored at every load and fault
+size listed in Section~III, and every number reported below is the mean of
+$60$ Monte Carlo runs.
+
+The data come from the CWRU $2$~HP Reliance Electric rig with a dynamometer
 load and the 6205-2RS drive-end bearing, sampled at $12$~kHz over the four load
 steps of Table~I, with outer-race spalls of $7$, $14$ and $21$~mil. The MFPT
-records add seven radial load levels from $25$ to $300$~lbs. The kinematic
+records add seven radial load levels from $25$ to $300$~lbs. The fault
 frequencies of Table~I, $f_{\text{BPFO}}=107.36$~Hz and
 $f_{\text{BPFI}}=162.18$~Hz at no load, serve as ground truth.
 
-Four figures of merit are computed on the SES. All are evaluated across the
-motor loads and fault severities listed in Section~III, and the reported values
-are means over $60$ Monte Carlo iterations.
-
-\emph{1) Spectral SNR improvement.} The ratio of the harmonic energy to the
-local noise floor is
+\emph{1) Spectral SNR.} The first measure sets the energy at the harmonics
+against the local noise floor,
 \begin{equation}
   \text{SNR}_{\text{SES}} = 10\log_{10}
   \frac{\sum_{m=1}^{M}\left|\text{SES}[k_m]\right|^{2}}
@@ -26,12 +27,13 @@ local noise floor is
 where $k_m$ runs over the bins inside the $\pm1.5\%$ slip window
 $\mathcal{B}_m$ around each harmonic $m f_{\text{fault}}$, and
 $\mathcal{K}_{\text{noise}}$ collects the non-harmonic bins of the
-$10$--$400$~Hz demodulation band. The gain produced by the filtering and
-envelope stages is the difference
-$\Delta\text{SNR}=\text{SNR}_{\text{SES}}-\text{SNR}_{\text{raw}}$.
+$10$--$400$~Hz demodulation band. The difference
+$\Delta\text{SNR}=\text{SNR}_{\text{SES}}-\text{SNR}_{\text{raw}}$ is the gain
+the filter and envelope stages add.
 
-\emph{2) True detection rate.} The fraction of the targeted harmonics
-($1\times$, $2\times$, $3\times f_{\text{fault}}$) that clear the threshold is
+\emph{2) True detection rate.} The second measure is the share of the targeted
+harmonics ($1\times$, $2\times$ and $3\times f_{\text{fault}}$) that clear the
+threshold,
 \begin{equation}
   \text{TDR} = \frac{1}{M}\sum_{m=1}^{M}
   \mathbb{I}\!\left(\max_{k\in\mathcal{B}_m}\text{SES}[k] > T[k]\right)\times100\%,
@@ -41,11 +43,11 @@ with $\mathbb{I}(\cdot)$ the indicator function and
 $\mathcal{B}_m=[m f_{\text{fault}}(1-0.015),\,m f_{\text{fault}}(1+0.015)]$ the
 slip search boundary.
 
-\emph{3) False-alarm rate.} The number of bins between $15$ and $400$~Hz,
-outside the harmonic masks, that still breach $T[k]$. It is reported as an
-absolute count rather than a fraction, because a threshold that is slightly too
-low floods the band and the bin count shows it more clearly than a percentage.
+\emph{3) False-alarm count.} The third measure counts the bins between $15$ and
+$400$~Hz, outside the harmonic masks, that still cross $T[k]$. It is a count
+rather than a percentage on purpose. When the threshold sits too low, the band
+fills with crossings, and the count shows how far the problem has gone.
 
-\emph{4) Execution latency.} The wall-clock time for one $2.0$~s frame
-($N=24\,000$ samples at $12$~kHz), measured on the same machine for every
-configuration.
+\emph{4) Execution latency.} The last measure is the wall-clock time for one
+$2.0$~s frame ($N=24\,000$ samples at $12$~kHz), taken on the same machine for
+every configuration.

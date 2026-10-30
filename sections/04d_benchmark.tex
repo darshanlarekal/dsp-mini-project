@@ -3,9 +3,9 @@
 % Owner: Member 4
 % ===========================================================================
 \subsection{Quantitative Benchmark and Comparative Discussion}
-Table~\ref{tab:benchmark} collects the three detection rules on the same
-Kurtosis-guided SES, so the comparison isolates the thresholding stage. Fig.~\ref{fig:ses}
-shows the spectra behind the numbers for the outer-race case.
+Table~\ref{tab:benchmark} applies the three threshold rules to the same
+Kurtosis-guided SES, so the detector is the only thing that changes between
+rows. Fig.~\ref{fig:ses} shows the spectra behind the outer-race numbers.
 
 \begin{table*}[!t]
 \centering
@@ -44,26 +44,25 @@ $\Delta$SNR (dB) \\
 \end{tabular}
 \end{table*}
 
-\emph{1) Light loading failure ($0$~HP).} Under no-load conditions the impacts
-are weak and the raw record sits below the noise (Raw SNR $=-7.82$~dB). The
-static threshold misses every harmonic: its detection rate is zero, because the
-fault lines never reach the fixed $0.055$ level.
+\emph{1) Light load, $0$~HP.} Under no load the impacts are weak and the raw
+record sits below the noise, at Raw SNR $=-7.82$~dB. The static threshold
+misses every harmonic. The fault lines never reach the fixed $0.055$ level, so
+the detection rate is zero.
 
-\emph{2) Heavy loading degradation ($3$~HP).} At full load the vibration energy
-rises through shaft deflection and electromagnetic hum. The static threshold
-still finds the harmonics (TDR $=100\%$), but the raised floor drives
-$224.6$ noise bins past the same line. A detector that false-alarms on hundreds
-of bins is not usable, whatever its detection rate says.
+\emph{2) Full load, $3$~HP.} At $3$~HP the vibration level rises through shaft
+deflection and electromagnetic hum. The static rule still finds the harmonics
+(TDR $=100\%$), but the raised floor pushes $224.6$ noise bins across the same
+line. Detecting every harmonic counts for little when hundreds of bins
+false-alarm alongside it.
 
-\emph{3) CA-CFAR target masking.} Cell averaging reacts to the load, and its
-false-alarm count stays in single digits. Its failure is different: strong
-harmonics inside the reference window inflate the local threshold, so the
-neighbouring and higher-order harmonics are suppressed. At $0$~HP this drops the
-detection rate to $66.7\%$.
+\emph{3) CA-CFAR masking.} Cell averaging follows the load, and its false-alarm
+count stays in single digits. Its weak point is the fault itself. Strong
+harmonics inside the reference window raise the local threshold, and that
+threshold then hides the neighbouring and higher-order harmonics. At $0$~HP the
+rule loses one harmonic of three, which drops the detection rate to $66.7\%$.
 
-\emph{4) Median--MAD robustness.} The proposed detector holds a $100\%$
-detection rate at every load with at most $0.6$ false-alarm bins. The median and
-the MAD both break down only when half the window is contaminated, so the tall
-impulses in $\mathcal{W}_k$ cannot lift the threshold that is meant to expose
-them. The rule itself is the one defined in Section~II-D,
-Eq.~\eqref{eq:tmad}.
+\emph{4) Median--MAD.} The proposed detector holds $100\%$ at every load, with
+at most $0.6$ false-alarm bins. Neither the median nor the MAD moves unless
+half the window is contaminated, so the tall impulses in $\mathcal{W}_k$
+cannot lift the threshold that is meant to expose them. The rule is the one
+defined in Section~II-D, Eq.~\eqref{eq:tmad}.

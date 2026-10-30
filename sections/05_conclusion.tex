@@ -3,38 +3,37 @@
 % Owner: Member 4
 % ===========================================================================
 \subsection{Summary of Diagnostic Achievements}
-The pipeline was run end to end on the CWRU and MFPT records, from the raw
-accelerometer channel to a thresholded envelope spectrum. Four results stand
-out.
+Four results came out of the end-to-end run on the CWRU and MFPT records, which
+starts at the raw accelerometer channel and ends at a thresholded envelope
+spectrum.
 \begin{enumerate}
-  \item The Fast Kurtogram selected the resonance band automatically, at
-        $f_c=3000$~Hz with $2000$~Hz bandwidth, with no manual tuning of the
-        filter.
-  \item The Median--MAD detector reached a $100\%$ true detection rate at
+  \item The Fast Kurtogram found the resonance band by itself: $f_c=3000$~Hz
+        with $2000$~Hz of bandwidth, and no manual tuning of the filter.
+  \item The Median--MAD detector returned a $100\%$ true detection rate at
         $0$, $1$, $2$ and $3$~HP.
-  \item Zero-phase Butterworth SOS filtering followed by coherent-gain
-        calibrated Hilbert envelope analysis gave more than $17$~dB of spectral
-        SNR improvement.
+  \item Zero-phase Butterworth SOS filtering, followed by coherent-gain
+        calibrated Hilbert envelope analysis, gave more than $17$~dB of
+        spectral SNR improvement at full load.
   \item The order-statistic threshold held the false-alarm count below one bin
         even at $3$~HP, where the static rule produced $224.6$.
 \end{enumerate}
 
 \subsection{Embedded Hardware Feasibility and Real-Time Budget}
-The same pipeline was timed and re-run in fixed point to check that it fits an
+The same pipeline was timed and re-run in fixed point, to check its fit on an
 edge device.
 \begin{enumerate}
-  \item \emph{Memory.} A $2.0$~s block ($N=24\,000$ samples) stored as
-        $16$-bit integers needs $48$~kB of SRAM, which fits an ARM Cortex-M4 or
-        M7 part such as the STM32F4/H7 with $512$~kB.
-  \item \emph{Execution latency.} The pipeline takes $18.42$~ms per
+  \item \emph{Memory.} A $2.0$~s block ($N=24\,000$ samples) at $16$~bits per
+        sample needs $48$~kB of SRAM. That fits an ARM Cortex-M4 or M7 part
+        such as the STM32F4/H7, which carries $512$~kB.
+  \item \emph{Execution latency.} The pipeline takes $18.42$~ms for a
         $2.0$~s window, so the duty cycle is
 \begin{equation}
   \eta = \frac{T_{\text{compute}}}{T_{\text{acquire}}}
   = \frac{18.42~\text{ms}}{2000.0~\text{ms}} \approx 0.92\%.
   \label{eq:duty}
 \end{equation}
-        The processor is idle or in sleep for more than $99\%$ of the timeline.
+        The processor idles or sleeps for more than $99\%$ of the timeline.
   \item \emph{Fixed-point suitability.} At $84.36$~dB the Q$1.15$ SQNR is high
-        enough that integer MAC units can run the whole chain without a
+        enough for integer MAC units to run the whole chain, with no
         floating-point unit.
 \end{enumerate}
