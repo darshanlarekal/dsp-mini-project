@@ -3,82 +3,71 @@
 % Owner: Member 3
 % ===========================================================================
 \subsection{Hilbert Demodulation and Windowed Squared Envelope Spectrum}
-Following Kurtosis-guided zero-phase bandpass filtering, the filtered signal
-$y_{\text{BP}}[n]$ contains periodic bursts of high-frequency structural
-ringing modulated at the characteristic bearing fault frequency
-$f_{\text{fault}}$. Direct spectral analysis of $y_{\text{BP}}[n]$ yields
-energy concentrated strictly around the high-frequency structural resonance
-$\omega_r$ rather than at the low-frequency repetition rate
-$f_{\text{fault}}$. To extract the impulse repetition rate and shift it to
-baseband, the discrete-time complex analytic signal $z[n]$ is constructed
-using the Discrete Hilbert Transform:
+After the Kurtosis-guided zero-phase bandpass stage, $y_{\text{BP}}[n]$ holds
+short bursts of structural ringing that repeat at the fault rate
+$f_{\text{fault}}$. The FFT of $y_{\text{BP}}[n]$ concentrates its energy
+around the resonance $\omega_r$ and shows almost nothing at $f_{\text{fault}}$,
+so the repetition rate has to be demodulated before it can be measured at
+all. The analytic signal is built with the Discrete Hilbert
+Transform~\cite{oppenheim}:
 \begin{equation}
   z[n] = y_{\text{BP}}[n] + j\hat{y}_{\text{BP}}[n],
   \label{eq:analytic}
 \end{equation}
-where $\hat{y}_{\text{BP}}[n]=\mathcal{H}\{y_{\text{BP}}[n]\}$ is the Discrete
-Hilbert Transform of the bandpass-filtered signal. In the frequency domain the
-Hilbert transformer acts as an ideal $90^\circ$ phase shifter,
+where $\hat{y}_{\text{BP}}[n]=\mathcal{H}\{y_{\text{BP}}[n]\}$ is the transform
+of the filtered signal. The transformer is an ideal $90^\circ$ phase shifter,
 \begin{equation}
   H_{\text{Hilbert}}(e^{j\omega}) = -j\,\operatorname{sgn}(\omega),
   \label{eq:hilbert}
 \end{equation}
-which imparts a $-\pi/2$ ($-90^\circ$) phase shift to every positive-frequency
-component while eliminating the negative frequencies.
+which moves every positive-frequency component by $-\pi/2$ and removes the
+negative frequencies.
 
-Rather than computing the conventional linear envelope
-$\sqrt{y_{\text{BP}}^2+\hat{y}_{\text{BP}}^2}$, the discrete-time amplitude
-squaring operation is applied to obtain the squared envelope $e[n]$:
+A conventional envelope takes the square root of
+$y_{\text{BP}}^2+\hat{y}_{\text{BP}}^2$. The squared envelope is used
+instead~\cite{randall2011}:
 \begin{equation}
   e[n] = |z[n]|^2 = z[n]z^{*}[n] = y_{\text{BP}}^2[n] + \hat{y}_{\text{BP}}^2[n].
   \label{eq:se}
 \end{equation}
-The squared envelope offers two theoretical advantages grounded in LTI signal
-theory. \emph{1) Absence of non-linear distortion.} By the DTFT modulation
-theorem, squaring in the time domain corresponds to a clean linear auto-convolution of
-the one-sided analytic spectrum in the frequency domain, which translates the
-high-frequency resonance carrier $\omega_r$ directly to baseband ($0$~Hz). A
-square root is a non-linear operation that introduces spurious intermodulation
-harmonics into the spectrum, and those harmonics can mask weak incipient
-faults.
+Two consequences follow from LTI theory. Squaring in time is auto-convolution
+in frequency, so the DTFT modulation theorem translates the carrier $\omega_r$
+to baseband ($0$~Hz) as a clean copy of itself. The square root offers no such
+guarantee: being non-linear, it scatters spurious intermodulation harmonics that can
+bury a weak incipient fault. Squaring also weights the impacts. A large peak grows
+quadratically while the background does not, so the fault-to-noise ratio rises
+before any threshold is applied.
 
-\emph{2) Quadratic SNR enhancement.} Squaring amplifies high-amplitude bearing
-impact peaks quadratically while suppressing low-amplitude background noise,
-which improves the fault-to-noise ratio ahead of thresholding.
-
-Because $e[n]$ is a squared quantity it is strictly non-negative
-($e[n]\ge0$ for all $n$) and therefore contains a large zero-frequency (DC)
-offset. Left in place, mainlobe spectral leakage from the $0$~Hz spike obscures
-the low-frequency cage and shaft harmonics, so the empirical mean is subtracted
-before the transform:
+Since $e[n]\ge0$ everywhere, the squared envelope carries a large DC term. Its
+mainlobe would leak across the low-frequency bins and hide the cage and shaft
+harmonics, so the mean is removed first:
 \begin{equation}
   e_0[n] = e[n] - \mu_e, \qquad
   \mu_e = \frac{1}{N}\sum_{n=0}^{N-1}e[n].
   \label{eq:emean}
 \end{equation}
 
-Practical fault frequencies (such as $107.36$~Hz) rarely fall on an exact DFT
-bin centre, since the bin resolution is $\Delta f = f_s/N_{\text{FFT}}$, and
-direct rectangular truncation therefore spreads severe sidelobe leakage across
-the neighbouring bins. The zero-mean squared envelope $e_0[n]$ is multiplied by
-an $N$-point Hann window,
+Fault frequencies rarely land on a DFT bin centre, and $107.36$~Hz with
+$\Delta f=f_s/N_{\text{FFT}}$ is no exception. Rectangular truncation then
+leaks sidelobes into the neighbouring bins, which an $N$-point Hann
+window~\cite{harris} suppresses:
 \begin{equation}
   w[n] = \tfrac12\left(1-\cos\frac{2\pi n}{N-1}\right),
-  \qquad n = 0,1,\dots,N-1,
+  \qquad n = 0,1,\dots,N-1.
   \label{eq:hann}
 \end{equation}
-which tapers the signal edges to zero. Because the taper removes roughly half
-of the signal energy, the Hann coherent gain
+Tapering the ends to zero scales the coherent amplitude by one half, and the
+coherent gain
 \begin{equation}
   CG = \frac{1}{N}\sum_{n=0}^{N-1}w[n] = \tfrac12
   \label{eq:cg}
 \end{equation}
-is used for amplitude calibration. The one-sided Squared Envelope Spectrum is
-then computed with an $N_{\text{FFT}}$-point radix-2 FFT:
+restores the amplitude scale. An $N_{\text{FFT}}$-point radix-2 FFT finally
+gives the one-sided Squared Envelope Spectrum
 \begin{equation}
   \text{SES}[k] = \frac{2}{N\cdot CG}\left|\sum_{n=0}^{N-1} w[n]\,e_0[n]\,
   e^{-j\frac{2\pi}{N_{\text{FFT}}}kn}\right|,
   \label{eq:ses}
 \end{equation}
-for $k=0,1,\dots,N_{\text{FFT}}/2$, where bin $k$ corresponds to the physical
-frequency $f_k = k\,f_s/N_{\text{FFT}}$~Hz.
+for $k=0,1,\dots,N_{\text{FFT}}/2$, where bin $k$ sits at
+$f_k=k\,f_s/N_{\text{FFT}}$~Hz.
