@@ -3,68 +3,181 @@
 % Owner: Member 2
 % ===========================================================================
 \subsection{Pre-Processing and Kurtosis-Guided Bandpass Filter Design}
-\emph{1) Mean removal.} The sensor signal contains a DC offset from the
-accelerometer bias and the static gravity component. Subtracting the sample
-mean
-\begin{equation}
-  x_0[n] = x[n] - \frac{1}{N}\sum_{m=0}^{N-1}x[m]
-  \label{eq:dc}
-\end{equation}
-prevents the zero-frequency bin from dominating the spectrum and from leaking
-into the low-frequency region where the fault harmonics lie.
 
-\emph{2) Sub-band kurtosis selection.} The resonance frequency $\omega_r$ is
-not known a priori. A filter bank of $B$ bands of width $\Delta\omega$
-spanning $[0,f_s/2]$ is applied to $x_0[n]$, and the normalized fourth-order
-moment
+\subsubsection{DC Offset Removal and Detrending}
+Raw vibration signals acquired from piezoelectric accelerometers typically
+contain a constant zero-frequency bias (DC offset) caused by sensor electronics
+and signal conditioning hardware. If left uncompensated, this DC component
+introduces a large spectral peak at $0$~Hz whose sidelobes leak into adjacent
+low-frequency bins during spectral analysis. Prior to filtering, the
+discrete-time vibration signal $x[n]$ of length $N$ is centered to zero mean by
+subtracting its sample average $\mu_x$:
 \begin{equation}
-  K_y = \frac{\mathbb{E}\{(y-\mu_y)^4\}}{\left(\mathbb{E}\{(y-\mu_y)^2\}\right)^2}
-  \label{eq:kurt}
+  x_0[n] = x[n] - \mu_x, \quad \text{where} \quad
+  \mu_x = \frac{1}{N}\sum_{m=0}^{N-1} x[m]
 \end{equation}
-is evaluated at the output of each band. A Gaussian noise band yields
-$K_y\approx 3$; a band containing the impulse-excited resonance yields
-$K_y>3$ because the impacts are rare and large. The band with maximum $K_y$
-defines $[\omega_{p1},\omega_{p2}]$ and hence the demodulation carrier.
+In the frequency domain, subtracting the sample mean eliminates the
+zero-frequency component of the Discrete-Time Fourier Transform (DTFT) at
+$\omega = 0$:
+\begin{equation}
+  X_0(e^{j0}) = \sum_{n=0}^{N-1} x_0[n] = 0
+\end{equation}
+This time-domain detrending ensures that subsequent sub-band filtering operates
+strictly on the alternating vibration oscillations around a zero baseline.
 
-\emph{3) Filter design.} Two designs are compared. The linear-phase Type-I
-Kaiser-windowed FIR filter of length $L$ has
-\begin{equation}
-  h_{\text{FIR}}[n] = h_{\text{ideal}}[n]\,w_{\text{Kaiser}}[n],\quad
-  w_{\text{Kaiser}}[n] = \frac{I_0\!\left(\beta\sqrt{1-\tilde{n}^2}\right)}{I_0(\beta)},
-  \label{eq:kaiser}
-\end{equation}
-where $\tilde{n}=2n/(L-1)-1$ is a normalized index and the shape parameter
-$\beta$ trades transition width against stopband attenuation.
-The alternative is a $4^{\text{th}}$-order Butterworth bandpass, obtained by
-the bilinear transform
-\begin{equation}
-  s = \frac{2}{T_s}\,\frac{1-z^{-1}}{1+z^{-1}},
-  \label{eq:bilinear}
-\end{equation}
-with the analog band edges pre-warped according to
-$\Omega = \frac{2}{T_s}\tan(\omega/2)$ so that the digital cutoff lands
-exactly on the specified frequency.
+\subsubsection{Sub-Band Kurtosis Resonance Selection}
+In practical rotating machinery, the low-frequency spectrum
+($0$--$1000$~Hz) is heavily corrupted by shaft rotational harmonics, structural
+vibration, and load-dependent friction noise. Consequently, localized bearing
+fault impulses are completely masked in the raw time-domain waveform. However,
+each time a rolling element strikes a surface defect on the bearing raceway,
+the short-duration mechanical impact acts like an impulse that excites
+high-frequency structural resonances of the bearing housing. While the
+low-frequency machine noise remains nearly stationary, the high-frequency
+resonance band contains sharp, periodic transient bursts.
 
-\emph{4) Cascade SOS realisation.} A high-order transfer function evaluated in
-direct form suffers from coefficient quantization: small perturbations of the
-denominator coefficients move the poles of~\eqref{eq:poles}, and for narrow
-bands the filter can even become unstable in finite precision. The design is
-therefore factored into second-order sections,
+Because the exact structural resonance frequency varies across different
+machines and mounting configurations, a static bandpass filter with fixed
+cutoff frequencies cannot reliably isolate the fault impulses. To automate the
+selection of the optimal demodulation band without requiring prior training
+data, a sub-band filter bank based on the Fast Kurtogram framework is
+implemented. The Nyquist frequency interval $[0, f_s/2]$ is partitioned across
+multiple dyadic and $1/3$-binary decomposition levels. At decomposition level
+$k$, the frequency range is divided into $M_k = \text{round}(2^k)$ sub-bands,
+where the $i$-th sub-band ($i = 0, 1, \dots, M_k - 1$) has a bandwidth
+$\Delta f_k$ and center frequency $f_{c,i}$ defined by:
 \begin{equation}
-  H(z) = g\prod_{i=1}^{K}\frac{b_{0i}+b_{1i}z^{-1}+b_{2i}z^{-2}}
-                          {1+a_{1i}z^{-1}+a_{2i}z^{-2}},
-  \label{eq:sos}
+  \Delta f_k = \frac{f_s}{2 M_k}, \quad
+  f_{c,i} = \left(i + \frac{1}{2}\right)\Delta f_k
 \end{equation}
-each of which keeps its own pole pair well conditioned.
 
-\emph{5) Zero-phase filtering.} Because the diagnostic decision depends on the
-\emph{time} of each impulse, the filter must not disperse the transients.
-Forward--backward filtering applies $H(z)$ and then $H(z^{-1})$,
+For each sub-band filtered signal $y_{k,i}[n]$, the time-domain impulsiveness is
+quantified using the fourth standardized central moment, known as Kurtosis:
 \begin{equation}
-  Y_{\text{BP}}(z) = H(z)H(z^{-1})X(z)
-  \;\Longrightarrow\;
-  \left|H(e^{j\omega})\right|^2 e^{-j0},
-  \label{eq:filtfilt}
+  K(f_{c,i}, \Delta f_k) = \frac{\frac{1}{N}\sum_{n=0}^{N-1}
+  \left(y_{k,i}[n] - \mu_{y}\right)^4}{\left(\frac{1}{N}\sum_{n=0}^{N-1}
+  \left(y_{k,i}[n] - \mu_{y}\right)^2\right)^2}
 \end{equation}
-which squares the magnitude response and cancels the phase, so the group delay
-is exactly zero and the impulse positions are preserved.
+where $\mu_y$ is the sample mean of $y_{k,i}[n]$, the numerator represents the
+fourth central moment (which amplifies large transient spikes due to the fourth
+power), and the denominator is the squared variance $\sigma_y^4$, which
+normalizes the metric against overall signal energy changes. Stationary Gaussian
+background noise yields a baseline Kurtosis close to $K = 3$. In contrast,
+frequency bands dominated by repetitive bearing fault impacts exhibit
+high-amplitude transient peaks, resulting in Kurtosis values significantly
+greater than $3$. The optimal resonance center frequency $f_c^*$ and bandwidth
+$BW^*$ are automatically selected by maximizing the Kurtosis across all
+decomposition levels:
+\begin{equation}
+  \{f_c^*, BW^*\} = \arg\max_{f_{c,i}, \, \Delta f_k} K(f_{c,i}, \Delta f_k)
+\end{equation}
+This yields the lower and upper passband cutoff frequencies
+$f_{\text{low}} = f_c^* - BW^*/2$ and $f_{\text{high}} = f_c^* + BW^*/2$,
+corresponding to normalized digital radian frequencies
+$\omega_1 = 2\pi f_{\text{low}}/f_s$ and $\omega_2 = 2\pi f_{\text{high}}/f_s$.
+
+\subsubsection{Bandpass Filter Design: Kaiser FIR versus Butterworth IIR}
+Once the optimal resonance passband $[\omega_1, \omega_2]$ is identified, a
+narrowband digital filter is constructed to suppress out-of-band motor
+interference and broadband noise. Two distinct digital filter architectures are
+designed and compared: a Linear-Phase Finite Impulse Response (FIR) filter and
+an Infinite Impulse Response (IIR) Butterworth filter.
+
+First, a Type-I Linear-Phase FIR bandpass filter of even order $M$ (length
+$L = M + 1$ taps) is designed using the Kaiser window method. Truncating the
+ideal brick-wall bandpass impulse response $h_d[n]$ around the symmetry center
+$\alpha = M/2$ and multiplying by a Kaiser window $w_K[n]$ yields the causal FIR
+filter coefficients:
+\begin{equation}
+\begin{split}
+  h_{\text{FIR}}[n] &= \left( \frac{\sin(\omega_2(n - \alpha)) -
+  \sin(\omega_1(n - \alpha))}{\pi(n - \alpha)} \right) \\
+  &\quad \times \frac{I_0\!\left(\beta \sqrt{1 -
+  \left(\frac{n - \alpha}{\alpha}\right)^2}\right)}{I_0(\beta)}
+\end{split}
+\end{equation}
+for $0 \le n \le M$, where $I_0(\cdot)$ is the zeroth-order modified Bessel
+function of the first kind, and $\beta$ is the shape parameter controlling the
+trade-off between main-lobe transition width and sidelobe attenuation. Because
+$h_{\text{FIR}}[n]$ satisfies the even symmetry condition
+$h_{\text{FIR}}[n] = h_{\text{FIR}}[M - n]$, the filter possesses exact linear
+phase across the entire frequency band, resulting in a constant causal group
+delay:
+\begin{equation}
+  \tau_{g,\text{FIR}}(\omega) =
+  -\frac{d\angle H_{\text{FIR}}(e^{j\omega})}{d\omega} = \frac{M}{2}
+  \text{ samples}
+\end{equation}
+Furthermore, since an FIR transfer function
+$H_{\text{FIR}}(z) = \sum_{n=0}^{M} h_{\text{FIR}}[n]z^{-n}$ contains only zeros
+in the finite $z$-plane and all poles reside strictly at the origin ($z = 0$),
+it is unconditionally bounded-input bounded-output (BIBO) stable.
+
+Second, to achieve sharp passband selectivity with a much lower computational
+order, a $4^{\text{th}}$-order Butterworth IIR bandpass filter is designed via
+the Bilinear Transform. The Bilinear Transform maps the stable left-half of the
+continuous-time $s$-plane ($\text{Re}(s) < 0$) strictly inside the unit circle
+of the discrete-time $z$-plane ($|z| < 1$) using the algebraic substitution:
+\begin{equation}
+  s = \frac{2}{T_s}\left(\frac{1 - z^{-1}}{1 + z^{-1}}\right)
+\end{equation}
+where $T_s = 1/f_s$ is the sampling period. Because this mapping introduces
+non-linear frequency compression along the frequency axis, the digital cutoff
+frequencies $\omega_1$ and $\omega_2$ are pre-warped to their continuous-time
+analog equivalents $\Omega_1$ and $\Omega_2$ prior to prototype transformation:
+\begin{equation}
+  \Omega_k = \frac{2}{T_s} \tan\!\left(\frac{\omega_k}{2}\right),
+  \quad k \in \{1, 2\}
+\end{equation}
+This pre-warping guarantees that the resulting digital Butterworth filter meets
+the exact $-3$~dB passband cutoff specifications at $f_{\text{low}}$ and
+$f_{\text{high}}$ with a maximally flat passband magnitude response.
+
+\subsubsection{Cascade SOS Realization and Zero-Phase Filtering}
+Implementing a high-order IIR bandpass filter (an $N_b = 4$ bandpass filter has
+$2N_b = 8$ poles) in Direct Form creates a high-degree denominator polynomial
+$A(z) = 1 + \sum_{m=1}^{8} a_m z^{-m}$. In finite-word-length digital
+processors, small quantization errors in the polynomial coefficients $a_m$ cause
+large perturbations in the pole locations, potentially pushing poles outside the
+unit circle and causing system instability. To prevent pole-shifting
+sensitivity, the overall transfer function $H_{\text{IIR}}(z)$ is factored into
+$K = 4$ Cascade Second-Order Sections (SOS):
+\begin{equation}
+  H_{\text{IIR}}(z) = G \prod_{k=1}^{K} H_k(z) = G \prod_{k=1}^{K}
+  \frac{b_{0k} + b_{1k}z^{-1} + b_{2k}z^{-2}}
+       {1 + a_{1k}z^{-1} + a_{2k}z^{-2}}
+\end{equation}
+where $G$ is the overall system gain and each biquad section $H_k(z)$ implements
+a single complex-conjugate pole pair $p_k, p_k^* = r_k e^{\pm j\theta_k}$. For
+causal BIBO stability, the region of convergence (ROC) $|z| > r_{\max}$ must
+include the unit circle $|z| = 1$, which requires every pole radius to satisfy:
+\begin{equation}
+  r_k = \sqrt{a_{2k}} < 1, \quad \forall k \in \{1, 2, \dots, K\}
+\end{equation}
+
+Although the Cascade SOS Butterworth IIR filter is computationally efficient,
+its phase response $\angle H_{\text{IIR}}(e^{j\omega})$ is non-linear near the
+passband edges. Non-linear phase produces frequency-dependent group delay
+$\tau_g(\omega)$, which disperses different frequency components of a sharp
+bearing fault impulse in time and reduces its peak amplitude. To eliminate phase
+distortion entirely, zero-phase forward-backward filtering is applied. The
+signal $x_0[n]$ is first filtered forward in time through $H(z)$, time-reversed,
+passed through $H(z)$ a second time, and reversed again. In the $z$-domain, this
+cascading corresponds to:
+\begin{equation}
+  Y_{\text{BP}}(z) = H(z) H(z^{-1}) X_0(z)
+\end{equation}
+Evaluating on the unit circle ($z = e^{j\omega}$), where
+$H(e^{-j\omega}) = H^*(e^{j\omega})$ for real-valued filter coefficients, yields
+the effective zero-phase frequency response:
+\begin{equation}
+  H_{\text{zero-phase}}(e^{j\omega}) = H(e^{j\omega}) H^*(e^{j\omega}) =
+  |H(e^{j\omega})|^2
+\end{equation}
+Because $|H(e^{j\omega})|^2$ is purely real and non-negative for all $\omega$,
+the net phase shift is identically zero
+($\angle H_{\text{zero-phase}}(e^{j\omega}) = 0$) and the effective group delay
+is $\tau_g(\omega) = 0$~samples. Consequently, the bandpass-filtered output
+$y_{\text{BP}}[n]$ preserves the exact temporal alignment and sharp peak
+morphology of the periodic bearing fault impacts while doubling the stopband
+attenuation in decibels.
