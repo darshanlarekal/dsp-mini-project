@@ -3,30 +3,54 @@
 % Owner: Member 1
 % ===========================================================================
 \subsection{Continuous-to-Discrete Fault Signal Model}
-Let the vibration be sampled at $f_s = 1/T_s$ with $f_s > 2f_{\max}$, so that
-the Nyquist criterion is satisfied and no aliasing folds the resonance band
-onto the diagnostic band. The discrete signal is modelled as a train of
-impulses convolved with the causal structural impulse response and corrupted
-by additive broadband noise:
+A localized bearing defect can be modelled as a sequence of short impacts.
+Let the impact times be $t_m = m/f_{\text{fault}} + \varepsilon_m$, where
+$f_{\text{fault}}$ is the nominal repetition rate and $\varepsilon_m$ is a
+timing perturbation caused, for example, by local slip or speed fluctuation.
+Each impact has amplitude $A_m$ and excites the mechanical structure with
+impulse response $h(t)$; background machine vibration and sensor noise enter
+as $w(t)$:
 \begin{equation}
-  x[n] = \sum_{m=-\infty}^{\infty} A_m\, h[n - mN_p - \tau_m] + w[n],
+  x(t) = \sum_{m} A_m\, h(t-t_m) + w(t).
+  \label{eq:ctmodel}
+\end{equation}
+For an underdamped structural mode the causal impulse response is a decaying
+sinusoid,
+\begin{equation}
+  h(t) = e^{-\sigma t}\cos(2\pi f_r t)\,u(t), \qquad t\geq 0,
+  \label{eq:ctir}
+\end{equation}
+where $\sigma$ is the exponential decay rate, $f_r$ the structural resonance
+frequency and $u(t)$ the unit step function. The response is causal because it
+begins at the impact time and decays afterwards. This repeated-impact,
+exponentially decaying representation is the classical localized-defect
+model~\cite{mcfadden1984}.
+
+Sampling with period $T_s=1/f_s$ gives
+\begin{equation}
+  x[n] = \sum_m A_m\, h[n-n_m] + w[n], \qquad
+  n_m \approx \operatorname{round}(f_s t_m).
   \label{eq:model}
 \end{equation}
-where $N_p = f_s/f_{\text{fault}}$ is the nominal discrete fault period,
-$\tau_m$ models the load-induced random slip, $w[n]$ is the background noise,
-and
-\begin{equation}
-  h[n] = e^{-\sigma nT_s}\cos(\omega_r n)\,u[n]
-  \label{eq:ir}
-\end{equation}
-is a causal, BIBO-stable underdamped resonance. In the $z$-plane, $h[n]$
-corresponds to a complex-conjugate pole pair
+Equivalently, the impact sequence is $p[n]=\sum_m A_m\delta[n-n_m]$, and the
+measured vibration is $x[n]=p[n]*h[n]+w[n]$, with $*$ the linear convolution.
+The nominal interval between impacts, in samples, is
+$N_p\approx f_s/f_{\text{fault}}$. In practice $N_p$ need not be an integer,
+and small timing variations shift the observed spectral peaks away from the
+ideal kinematic frequencies.
+
+The sampling frequency must exceed twice the highest vibration frequency to
+be represented, $f_s>2f_{\max}$, and the acquisition chain must suppress
+out-of-band components before sampling to prevent aliasing. The records used
+here cover $12$ and $48$~kHz (CWRU) and $48.828$ and $97.656$~kHz (MFPT), with
+Nyquist frequencies of $6$, $24$, $24.414$ and $48.828$~kHz, respectively.
+
+In the $z$-plane, $h[n]$ corresponds to a complex-conjugate pole pair
 \begin{equation}
   z_{1,2} = r e^{\pm j\omega_r}, \qquad r = e^{-\sigma T_s} < 1,
   \label{eq:poles}
 \end{equation}
-so stability follows from $|z_{1,2}|<1$. Equation~\eqref{eq:model} makes the
-central point of the paper explicit: the fault signature $A_m$ is a
-\emph{low-frequency modulation} of a \emph{high-frequency carrier}
-$\omega_r$, and the two are separated by demodulation rather than by direct
-spectral inspection.
+so stability follows from $|z_{1,2}|<1$. The model makes the central point of
+the paper explicit: the fault signature $A_m$ is a \emph{low-frequency
+modulation} of a \emph{high-frequency carrier} $\omega_r$, and the two are
+separated by demodulation rather than by direct spectral inspection.

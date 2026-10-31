@@ -2,39 +2,40 @@
 % Section I -- Introduction
 % Owner: Member 1
 % ===========================================================================
-\IEEEPARstart{R}{olling} element bearings are the most frequent cause of
-failure in rotating machinery, and a large fraction of industrial maintenance
-cost is spent on their inspection. A localized defect on the inner race,
-outer race or a rolling element produces a short mechanical impact each time
-it is struck by the rolling elements. Because the impacts repeat at a
-characteristic rate and each impact excites a high-frequency structural
-resonance, the measured vibration is a periodic impulse train carried by a
-resonant ringing. The diagnostic information therefore resides in the
-\emph{repetition rate} of the impacts, not in the raw waveform, and it is
-recovered by demodulating the resonance -- the principle behind envelope
-analysis~\cite{randall2011,kim2020}.
+\IEEEPARstart{R}{olling} element bearings support rotating shafts in motors,
+pumps, turbines, gearboxes and many other machines. Their condition matters
+for machine availability, because localized surface damage can develop into
+severe mechanical failure when it is not found early. A defect on an inner
+race, outer race or rolling element produces a short-duration contact
+disturbance each time the rolling contact passes the damaged region. These
+impacts excite resonances in the bearing and in the supporting structure, and
+an accelerometer mounted on or near the housing observes them as vibration.
+The diagnostic information sits in the \emph{repetition rate} of the impacts,
+and it is recovered by demodulating the resonance that carries them, which is
+the principle behind envelope analysis~\cite{randall2011,kim2020}.
 
-Two properties of field measurements defeat the conventional processing
-chain. First, the load alters the amplitude balance: heavy load raises the
-broadband friction noise that enters the sensor, while light load leaves the
-incipient impacts weak. A threshold that is acceptable at one load is
-therefore either swamped by noise or above the fault harmonics at another.
-Second, load changes the kinematics: cage and ball slip displace the true
-fault frequency by roughly $\pm 1$--$2\%$ from the value predicted by the
-bearing geometry, so a detector that tests a single spectral bin can lose the
-harmonic entirely. Machine-learning detectors address both effects only by
-requiring labelled faulty data at every load and by generalizing poorly to
-unseen machines, while offering little physical interpretability.
+The measured vibration is not stationary across operating conditions. Load
+changes the contact force and the strength of the defect-induced impacts, and
+it also changes the overall vibration and noise floor. Effective shaft speed
+differs between load conditions, and local slip makes the actual impact
+repetition rate depart slightly from the ideal value predicted by bearing
+geometry. A fixed threshold on raw amplitude or on the spectrum is therefore
+not expected to behave consistently at all loads.
 
-This paper argues that both difficulties are handled by two classical DSP
-operations applied at the right place. The filter band is chosen by
-kurtosis, which measures impulsiveness and therefore locates the resonance
-excited by the defect~\cite{antoni2007}; the decision threshold is estimated
-\emph{locally} in the envelope spectrum with an order statistic, which is
-insensitive to the impulsive outliers that corrupt a moving average. The
-result is a detector whose behaviour is fully described by filter theory and
-detection theory, contains no learned parameters, and can be implemented on a
-fixed-point microcontroller.
+The approach taken here is a pure DSP framework, not a model trained on
+labelled examples. Every stage can be inspected on its own: the
+characteristic frequencies, the filters, the transforms and the detection
+thresholds are all explicit. Interpretability of this kind does not guarantee
+generalization. Bearing geometry, shaft speed, sensor placement and
+validation data are still required.
+
+This paper applies two classical operations where they matter most. The
+filter band is chosen by kurtosis, which measures impulsiveness and therefore
+locates the resonance excited by the defect~\cite{antoni2007}; the decision
+threshold is estimated \emph{locally} in the envelope spectrum with an order
+statistic, which is insensitive to the impulsive outliers that corrupt a
+moving average. The resulting detector contains no learned parameters and can
+be implemented on a fixed-point microcontroller.
 
 The contributions of this paper are:
 \begin{itemize}
