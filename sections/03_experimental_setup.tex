@@ -148,7 +148,6 @@ order Butterworth bandpass realised in cascade SOS form with forward--backward
 filtering, an FFT length $N=4096$ (giving $\Delta f = 2.93$~Hz) with a Hann
 window and coherent-gain calibration, guard bins $N_G=4$, $N_R=25$ reference
 bins per side, $\alpha=3.5$ for CA-CFAR and $\gamma=4.5$ for the Median--MAD
-rule. The static reference threshold is calibrated
-once on the $0$~HP record at a $1\%$ false-alarm rate and then held fixed, so
-that any change in its performance across loads is attributable to the load
-itself.
+rule. The static reference threshold is held fixed at
+$T_{\text{static}}=0.055$ for every record, so that any change in its
+performance across loads is attributable to the load itself.
