@@ -2,10 +2,10 @@
 
 The public MFPT test-rig recordings store a ``bearing`` struct with the fields
 ``gs`` (acceleration signal), ``sr`` (sampling rate), ``rate`` (shaft speed in
-Hz) and ``load`` (radial load in lb).  The four characteristic defect
-frequencies published with the dataset at the 25 Hz reference shaft speed are
-BPFO = 81.125 Hz, BPFI = 118.88 Hz, FTF = 14.838 Hz and BSF = 63.91 Hz; they
-scale linearly with shaft speed.
+Hz) and ``load`` (radial load in lb).  The NICE bearing of the rig has eight
+rolling elements, a 0.235 in element diameter, a 1.245 in pitch diameter and a
+zero contact angle, so the four characteristic frequencies follow the standard
+rolling-bearing kinematics used for the CWRU bearing.
 """
 
 from __future__ import annotations
@@ -17,17 +17,11 @@ import numpy as np
 import scipy.io as sio
 from scipy import signal
 
-# NICE bearing used on the MFPT test rig: 8 balls, 0.2354 in ball diameter,
-# 2.815 in pitch diameter, zero contact angle.
+# NICE bearing used on the MFPT test rig.
 MFPT_NICE = SimpleNamespace(
-    reference_shaft_rate_hz=25.0,
-    BPFO_Hz=81.125,
-    BPFI_Hz=118.88,
-    FTF_Hz=14.838,
-    BSF_Hz=63.91,
     n_balls=8,
-    ball_diameter_in=0.2354,
-    pitch_diameter_in=2.815,
+    ball_diameter_in=0.235,
+    pitch_diameter_in=1.245,
     contact_angle_deg=0.0,
 )
 
@@ -38,14 +32,19 @@ def kinematic_fault_frequencies(shaft_rate_hz, geometry=MFPT_NICE):
     if not np.isfinite(shaft_rate_hz) or shaft_rate_hz <= 0:
         raise ValueError("Shaft rate must be a positive finite value.")
 
-    scale = shaft_rate_hz / geometry.reference_shaft_rate_hz
+    ratio = (geometry.ball_diameter_in / geometry.pitch_diameter_in) * np.cos(
+        np.deg2rad(geometry.contact_angle_deg)
+    )
+    n = geometry.n_balls
     return {
         "shaft_rate_Hz": shaft_rate_hz,
         "shaft_rpm": 60.0 * shaft_rate_hz,
-        "BPFO_Hz": geometry.BPFO_Hz * scale,
-        "BPFI_Hz": geometry.BPFI_Hz * scale,
-        "BSF_Hz": geometry.BSF_Hz * scale,
-        "FTF_Hz": geometry.FTF_Hz * scale,
+        "BPFO_Hz": (n / 2) * shaft_rate_hz * (1 - ratio),
+        "BPFI_Hz": (n / 2) * shaft_rate_hz * (1 + ratio),
+        "BSF_Hz": (geometry.pitch_diameter_in / (2 * geometry.ball_diameter_in))
+        * shaft_rate_hz
+        * (1 - ratio**2),
+        "FTF_Hz": (shaft_rate_hz / 2) * (1 - ratio),
     }
 
 
