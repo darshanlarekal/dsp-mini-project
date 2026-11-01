@@ -13,7 +13,7 @@ rows. Fig.~\ref{fig:ses} shows the spectra behind the outer-race numbers.
 detectors for the outer-race $7$~mil record; mean $\pm$ sample standard
 deviation over the five $2.0$~s segments of each record. The static rule uses
 $T_{\text{static}}=0.055$, CA-CFAR uses $\alpha=3.5$ and the proposed rule uses
-$\gamma=4.5$. FAR is the percentage of eligible non-harmonic bins above the
+$\gamma=7.0$. FAR is the percentage of eligible non-harmonic bins above the
 threshold.}
 \label{tab:benchmark}
 \footnotesize
@@ -26,22 +26,22 @@ $\Delta$SNR (dB) \\
 \multirow{3}{*}{0 HP (0~N$\cdot$m)}
  & Static ($0.055$)     & $20.0 \pm 44.7$ & $1.4 \pm 3.2$   & $+1.95$ & $+27.40$ & $+25.45 \pm 2.72$ \\
  & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $7.0 \pm 2.1$ & $+1.95$ & $+27.40$ & $+25.45 \pm 2.72$ \\
- & Median--MAD           & $100.0 \pm 0.0$ & $10.3 \pm 3.7$ & $+1.95$ & $+27.40$ & $+25.45 \pm 2.72$ \\
+ & Median--MAD           & $100.0 \pm 0.0$ & $6.5 \pm 3.3$ & $+1.95$ & $+27.40$ & $+25.45 \pm 2.72$ \\
 \midrule
 \multirow{3}{*}{1 HP (2.4~N$\cdot$m)}
  & Static ($0.055$)     & $0.0 \pm 0.0$   & $0.0 \pm 0.0$   & $-0.21$ & $+18.99$ & $+19.20 \pm 8.71$ \\
  & CA-CFAR ($\alpha=3.5$) & $60.0 \pm 54.8$ & $5.8 \pm 2.8$ & $-0.21$ & $+18.99$ & $+19.20 \pm 8.71$ \\
- & Median--MAD           & $60.0 \pm 54.8$ & $7.4 \pm 2.5$ & $-0.21$ & $+18.99$ & $+19.20 \pm 8.71$ \\
+ & Median--MAD           & $60.0 \pm 54.8$ & $4.6 \pm 2.8$ & $-0.21$ & $+18.99$ & $+19.20 \pm 8.71$ \\
 \midrule
 \multirow{3}{*}{2 HP (4.8~N$\cdot$m)}
  & Static ($0.055$)     & $0.0 \pm 0.0$   & $0.0 \pm 0.0$   & $+0.86$ & $+21.20$ & $+20.35 \pm 5.38$ \\
  & CA-CFAR ($\alpha=3.5$) & $86.7 \pm 29.8$ & $5.2 \pm 0.7$ & $+0.86$ & $+21.20$ & $+20.35 \pm 5.38$ \\
- & Median--MAD           & $86.7 \pm 29.8$ & $6.4 \pm 1.3$ & $+0.86$ & $+21.20$ & $+20.35 \pm 5.38$ \\
+ & Median--MAD           & $86.7 \pm 29.8$ & $4.3 \pm 1.4$ & $+0.86$ & $+21.20$ & $+20.35 \pm 5.38$ \\
 \midrule
 \multirow{3}{*}{3 HP (7.2~N$\cdot$m)}
  & Static ($0.055$)     & $0.0 \pm 0.0$   & $0.0 \pm 0.0$   & $-2.06$ & $+24.60$ & $+26.66 \pm 1.56$ \\
  & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $6.1 \pm 1.0$ & $-2.06$ & $+24.60$ & $+26.66 \pm 1.56$ \\
- & Median--MAD           & $100.0 \pm 0.0$ & $7.9 \pm 0.7$ & $-2.06$ & $+24.60$ & $+26.66 \pm 1.56$ \\
+ & Median--MAD           & $100.0 \pm 0.0$ & $4.7 \pm 0.5$ & $-2.06$ & $+24.60$ & $+26.66 \pm 1.56$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -61,14 +61,17 @@ $2$~HP and $100\%$ at $3$~HP. The large standard deviations at $1$ and $2$~HP
 while others keep them, because the reference window inherits energy from the
 fault lines themselves.
 
-\emph{3) Median--MAD.} The proposed rule returns exactly the same detection
-rate as CA-CFAR at every load, segment for segment, but its false-alarm share is
-higher: $10.3\%$ against $7.0\%$ at $0$~HP, $7.4\%$ against $5.8\%$ at $1$~HP,
-$6.4\%$ against $5.2\%$ at $2$~HP and $7.9\%$ against $6.1\%$ at $3$~HP. The
-median and the MAD are robust to contaminated reference windows, but at
-$\gamma=4.5$ the resulting threshold sits below the cell-averaged one, so the
-robustness is paid for in crossings. The operating point $\gamma$ is the
-parameter that trades those crossings against detection margin.
+\emph{3) Median--MAD.} At $\gamma=7.0$ the proposed rule returns exactly the
+same detection rate as CA-CFAR at every load, segment for segment, and its
+false-alarm share is lower at every load: $6.5\%$ against $7.0\%$ at $0$~HP,
+$4.6\%$ against $5.8\%$ at $1$~HP, $4.3\%$ against $5.2\%$ at $2$~HP and
+$4.7\%$ against $6.1\%$ at $3$~HP. The gain comes from the operating point:
+at this $\gamma$ the median-plus-MAD threshold sits above the cell-averaged
+one, so the robust estimate of the floor is not paid for in crossings.
+Outside this table the same conservatism costs detection on ten of the fifty
+benchmark cells, all on weaker inner-race, ball and $14$~mil outer-race
+records, where the mean TDR drops by $6.7$ to $20$ points as a marginal
+harmonic falls below the raised threshold.
 
 \emph{4) SNR gain.} The filter and envelope stages add between $19.2$ and
 $26.7$~dB of spectral SNR at the fault harmonics, and the gain is largest at
