@@ -4,28 +4,24 @@
 % ===========================================================================
 \begin{figure}[H]
 \centering
-% \includegraphics[width=0.92\textwidth]{Fig3_MultiLoad_SES_Thresholding.png}
-\figbox{3.2cm}{\columnwidth}{\texttt{Fig3\_MultiLoad\_SES\_Thresholding.png}\\[2pt]
-2$\times$2 grid of SES and thresholds at 0, 1, 2 and 3~HP: SES (grey), static
-threshold (dashed red), CA-CFAR (dotted blue), Median--MAD (solid green),
-harmonic orders marked.}
-\caption{Calibrated SES and comparative thresholding at four motor loads. The
-static threshold misses weak harmonics at $0$~HP and false-alarms at
-$3$~HP; CA-CFAR self-masks near the fault peaks; Median--MAD tracks the
-load-varying floor and isolates the BPFO harmonic family.}
+\includegraphics[width=0.92\textwidth]{Fig3_MultiLoad_SES_Thresholding.png}
+\caption{Calibrated SES and comparative thresholding at four motor loads for
+the outer-race $7$~mil record. The static threshold of $0.055$ sits above the
+SES at every load and marks no harmonic; CA-CFAR and Median--MAD follow the
+load-dependent floor and flag all three BPFO harmonics in every panel.}
 \label{fig:ses}
 \end{figure}
 
 \subsection{Multi-Load Adaptive Thresholding}
 Fig.~\ref{fig:ses} shows the calibrated SES and the three thresholds for an
-outer-race defect at the four motor loads of Table~\ref{tab:kinematics}. At
-$0$~HP the reduced radial force produces weak impact modulation, and the
-static threshold misses the $2\times$ and $3\times$ BPFO harmonics. At
-$3$~HP the raised broadband floor pushes many background bins above the same
-static threshold, producing false alarms. The moving-average CA-CFAR threshold
-does scale with load, but it spikes adjacent to the $1\times$, $2\times$ and
-$3\times$ BPFO peaks because harmonic energy contaminates its reference
-window. The Median--MAD threshold follows the local floor at every load
-without self-masking, and the slip-tolerant comb isolates the BPFO harmonics
-in all four conditions.
-
+outer-race defect at the four motor loads of Table~\ref{tab:kinematics}. The
+fixed threshold is not scale-invariant: at $0.055$ it lies above the whole
+spectrum in all four panels, so no BPFO harmonic crosses it and the static rule
+marks nothing. Across the five benchmark segments it fires only in one $0$~HP
+segment that contains an unusually large transient, which is why its detection
+rate in Table~\ref{tab:benchmark} is not zero. The adaptive rules behave
+differently. Both CA-CFAR and Median--MAD follow the load-dependent floor, and
+both flag the $1\times$, $2\times$ and $3\times$ BPFO harmonics in every panel,
+so the harmonic comb survives the load change once the threshold tracks the
+noise. The two adaptive rules differ quantitatively rather than qualitatively;
+Table~\ref{tab:benchmark} measures that difference.
