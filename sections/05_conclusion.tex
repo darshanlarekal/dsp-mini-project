@@ -7,15 +7,19 @@ Four results came out of the end-to-end run on the CWRU and MFPT records, which
 starts at the raw accelerometer channel and ends at a thresholded envelope
 spectrum.
 \begin{enumerate}
-  \item The Fast Kurtogram found the resonance band by itself: $f_c=3000$~Hz
-        with $2000$~Hz of bandwidth, and no manual tuning of the filter.
-  \item The Median--MAD detector returned a $100\%$ true detection rate at
-        $0$, $1$, $2$ and $3$~HP.
+  \item The Fast Kurtogram found the resonance band by itself: $f_c=5181.8$~Hz
+        with $545.5$~Hz of bandwidth on the $0$~HP outer-race record, and no
+        manual tuning of the filter.
+  \item CA-CFAR and Median--MAD both recovered the BPFO harmonic comb at every
+        load, with mean detection rates of $100$, $60$, $86.7$ and $100\%$
+        from no load to full load.
   \item Zero-phase Butterworth SOS filtering, followed by coherent-gain
-        calibrated Hilbert envelope analysis, gave more than $17$~dB of
-        spectral SNR improvement at full load.
-  \item The order-statistic threshold held the false-alarm count below one bin
-        even at $3$~HP, where the static rule produced $224.6$.
+        calibrated Hilbert envelope analysis, gave between $19.2$ and
+        $26.7$~dB of spectral SNR improvement across the load sweep.
+  \item At the design value $\gamma=4.5$ the Median--MAD rule matched
+        CA-CFAR's detection rate but crossed more non-harmonic bins
+        ($6.4$--$10.3\%$ against $5.2$--$7.0\%$); the fixed $0.055$ threshold
+        did not transfer across loads.
 \end{enumerate}
 
 \subsection{Embedded Hardware Feasibility and Real-Time Budget}
@@ -25,15 +29,24 @@ edge device.
   \item \emph{Memory.} A $2.0$~s block ($N=24\,000$ samples) at $16$~bits per
         sample needs $48$~kB of SRAM. That fits an ARM Cortex-M4 or M7 part
         such as the STM32F4/H7, which carries $512$~kB.
-  \item \emph{Execution latency.} The pipeline takes $18.42$~ms for a
-        $2.0$~s window, so the duty cycle is
+  \item \emph{Execution latency.} The interpreted Python (CPython/Colab)
+        pipeline takes between $0.35$ and $0.45$~s for a $2.0$~s window, so
+        the duty cycle is
 \begin{equation}
   \eta = \frac{T_{\text{compute}}}{T_{\text{acquire}}}
-  = \frac{18.42~\text{ms}}{2000.0~\text{ms}} \approx 0.92\%.
+  \approx \frac{0.35\text{--}0.45~\text{s}}{2.0~\text{s}}
+  = 17\text{--}23\%.
   \label{eq:duty}
 \end{equation}
-        The processor idles or sleeps for more than $99\%$ of the timeline.
-  \item \emph{Fixed-point suitability.} At $84.36$~dB the Q$1.15$ SQNR is high
-        enough for integer MAC units to run the whole chain, with no
-        floating-point unit.
+        Even without compilation the chain is $4.4$--$5.7$ times faster than
+        real time, and the processor idles for more than three quarters of the
+        timeline. The figure is a software timing, not an embedded benchmark.
+        The MFPT records, sampled at $48.828$~kHz, take about $0.71$~s per
+        $2.0$~s segment.
+  \item \emph{Fixed-point suitability.} At $29.76$~dB the Q$1.15$ SQNR is far
+        below the $98.08$~dB ideal, because the simulation quantizes both
+        coefficients and the signal bus on a record with a crest factor near
+        five. The harmonic decision survives (Section~IV-F), so integer MAC
+        units can run the filter, while the envelope FFT stage keeps a wider
+        internal word length.
 \end{enumerate}
