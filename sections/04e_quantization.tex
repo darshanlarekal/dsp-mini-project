@@ -12,21 +12,32 @@ against IEEE~754 double precision.
 to coefficient rounding. A pole can land on the unit circle or outside it. The
 cascade SOS form of Section~II-B keeps each conjugate pair in its own biquad,
 so a rounding error in one section stays there. The largest pole radius of the
-designed filter is $r_{\max}=0.8418$, and under Q$1.15$ quantization the poles
-move by less than $0.0012$. The design stays clear of the unit circle.
+designed filter is $r_{\max}=0.9626$; the region of convergence $|z|>0.9626$
+contains the unit circle, so the cascade stays BIBO stable.
 
 \emph{2) Quantization noise and SQNR.} Over the filtered passband the
-signal-to-quantization-noise ratio is $84.36$~dB. For $B=16$ bits the
+signal-to-quantization-noise ratio is $29.76$~dB. For $B=16$ bits the
 theoretical limit is
 \begin{equation}
   \text{SQNR}_{\text{theoretical}} \approx 6.02B + 1.76~\text{dB}
   = 98.08~\text{dB},
   \label{eq:sqnr}
 \end{equation}
-so the implementation lands about $14$~dB below the ideal figure. That gap is
-normal. The filter and the FFT add round-off of their own on top of the ADC
-quantization, and both are counted alongside it. The residual
-$e_q[n]=y_{\text{float}}[n]-y_{Q15}[n]$ is zero-mean and white, with no tonal
-component, and the Q$1.15$ envelope spectrum cannot be told apart from the
-double-precision reference. Sixteen bits keep the diagnostic information
-intact.
+so the implementation lands about $68$~dB below the ideal figure. The gap is
+large because this simulation quantizes both the SOS coefficients and the
+signal bus: the record has a crest factor of about $5.3$, so the Q$1.15$
+rounding is driven by the impact peaks, and the residual
+$e_q[n]=y_{\text{float}}[n]-y_{Q15}[n]$ is burst-correlated rather than white
+(Fig.~\ref{fig:fwl}(b)). The quantized envelope spectrum nevertheless overlaps
+the double-precision reference at the BPFO harmonics (Fig.~\ref{fig:fwl}(a)),
+so the harmonic decision is unchanged.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.95\textwidth]{Figure4_Benchmarking_and_FWL_Analysis.png}
+\caption{Finite-word-length evaluation on the $0$~HP outer-race record:
+(a) calibrated SES under Q$1.15$ fixed-point filtering against the float64
+reference, (b) quantization residual $e_q[n]$ over a $50$~ms window, and
+(c) detector TDR across the four CWRU loads.}
+\label{fig:fwl}
+\end{figure*}
