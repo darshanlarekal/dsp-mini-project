@@ -10,59 +10,68 @@ rows. Fig.~\ref{fig:ses} shows the spectra behind the outer-race numbers.
 \begin{table*}[!t]
 \centering
 \caption{Quantitative performance benchmarking across operational loads and
-detectors; means over $60$ Monte Carlo iterations. The static rule uses
+detectors for the outer-race $7$~mil record; mean $\pm$ sample standard
+deviation over the five $2.0$~s segments of each record. The static rule uses
 $T_{\text{static}}=0.055$, CA-CFAR uses $\alpha=3.5$ and the proposed rule uses
-$\gamma=4.5$.}
+$\gamma=4.5$. FAR is the percentage of eligible non-harmonic bins above the
+threshold.}
 \label{tab:benchmark}
 \footnotesize
 \setlength{\tabcolsep}{5pt}
 \begin{tabular}{llcccccc}
 \toprule
-Load & Detector & TDR (\%) & FAR (bins) & Raw SNR (dB) & SES SNR (dB) &
+Load & Detector & TDR (\%) & FAR (\%) & Raw SNR (dB) & SES SNR (dB) &
 $\Delta$SNR (dB) \\
 \midrule
 \multirow{3}{*}{0 HP (0~N$\cdot$m)}
- & Static ($0.055$)     & $0.0 \pm 0.0$   & $0.0 \pm 0.0$     & $-7.82$ & $+3.14$  & $+10.96 \pm 0.42$ \\
- & CA-CFAR ($\alpha=3.5$) & $66.7 \pm 0.0$ & $0.8 \pm 0.4$    & $-7.82$ & $+3.14$  & $+10.96 \pm 0.42$ \\
- & Median--MAD           & $100.0 \pm 0.0$ & $0.0 \pm 0.0$    & $-7.82$ & $+3.14$  & $+10.96 \pm 0.42$ \\
+ & Static ($0.055$)     & $20.0 \pm 44.7$ & $1.4 \pm 3.2$   & $+1.95$ & $+27.40$ & $+25.45 \pm 2.72$ \\
+ & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $7.0 \pm 2.1$ & $+1.95$ & $+27.40$ & $+25.45 \pm 2.72$ \\
+ & Median--MAD           & $100.0 \pm 0.0$ & $10.3 \pm 3.7$ & $+1.95$ & $+27.40$ & $+25.45 \pm 2.72$ \\
 \midrule
 \multirow{3}{*}{1 HP (2.4~N$\cdot$m)}
- & Static ($0.055$)     & $66.7 \pm 0.0$  & $0.0 \pm 0.0$     & $-6.18$ & $+8.92$  & $+15.10 \pm 0.38$ \\
- & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $1.4 \pm 0.5$   & $-6.18$ & $+8.92$  & $+15.10 \pm 0.38$ \\
- & Median--MAD           & $100.0 \pm 0.0$ & $0.0 \pm 0.0$   & $-6.18$ & $+8.92$  & $+15.10 \pm 0.38$ \\
+ & Static ($0.055$)     & $0.0 \pm 0.0$   & $0.0 \pm 0.0$   & $-0.21$ & $+18.99$ & $+19.20 \pm 8.71$ \\
+ & CA-CFAR ($\alpha=3.5$) & $60.0 \pm 54.8$ & $5.8 \pm 2.8$ & $-0.21$ & $+18.99$ & $+19.20 \pm 8.71$ \\
+ & Median--MAD           & $60.0 \pm 54.8$ & $7.4 \pm 2.5$ & $-0.21$ & $+18.99$ & $+19.20 \pm 8.71$ \\
 \midrule
 \multirow{3}{*}{2 HP (4.8~N$\cdot$m)}
- & Static ($0.055$)     & $100.0 \pm 0.0$ & $0.0 \pm 0.0$     & $-4.95$ & $+11.45$ & $+16.40 \pm 0.35$ \\
- & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $2.2 \pm 0.7$   & $-4.95$ & $+11.45$ & $+16.40 \pm 0.35$ \\
- & Median--MAD           & $100.0 \pm 0.0$ & $0.2 \pm 0.4$   & $-4.95$ & $+11.45$ & $+16.40 \pm 0.35$ \\
+ & Static ($0.055$)     & $0.0 \pm 0.0$   & $0.0 \pm 0.0$   & $+0.86$ & $+21.20$ & $+20.35 \pm 5.38$ \\
+ & CA-CFAR ($\alpha=3.5$) & $86.7 \pm 29.8$ & $5.2 \pm 0.7$ & $+0.86$ & $+21.20$ & $+20.35 \pm 5.38$ \\
+ & Median--MAD           & $86.7 \pm 29.8$ & $6.4 \pm 1.3$ & $+0.86$ & $+21.20$ & $+20.35 \pm 5.38$ \\
 \midrule
 \multirow{3}{*}{3 HP (7.2~N$\cdot$m)}
- & Static ($0.055$)     & $100.0 \pm 0.0$ & $224.6 \pm 12.3$  & $-3.10$ & $+14.28$ & $+17.38 \pm 0.31$ \\
- & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $3.8 \pm 1.1$   & $-3.10$ & $+14.28$ & $+17.38 \pm 0.31$ \\
- & Median--MAD           & $100.0 \pm 0.0$ & $0.6 \pm 0.5$   & $-3.10$ & $+14.28$ & $+17.38 \pm 0.31$ \\
+ & Static ($0.055$)     & $0.0 \pm 0.0$   & $0.0 \pm 0.0$   & $-2.06$ & $+24.60$ & $+26.66 \pm 1.56$ \\
+ & CA-CFAR ($\alpha=3.5$) & $100.0 \pm 0.0$ & $6.1 \pm 1.0$ & $-2.06$ & $+24.60$ & $+26.66 \pm 1.56$ \\
+ & Median--MAD           & $100.0 \pm 0.0$ & $7.9 \pm 0.7$ & $-2.06$ & $+24.60$ & $+26.66 \pm 1.56$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\emph{1) Light load, $0$~HP.} Under no load the impacts are weak and the raw
-record sits below the noise, at Raw SNR $=-7.82$~dB. The static threshold
-misses every harmonic. The fault lines never reach the fixed $0.055$ level, so
-the detection rate is zero.
+\emph{1) Static threshold.} The fixed level of $0.055$ was set in dataset
+units, and it does not transfer. At $1$, $2$ and $3$~HP no bin crosses it. At
+$0$~HP four of the five segments also stay below it; the $20\%$ mean comes from
+a single segment whose transient pushes the harmonic peaks over the line. A
+fixed threshold therefore reports neither a stable detection rate nor a stable
+false-alarm rate across the load sweep.
 
-\emph{2) Full load, $3$~HP.} At $3$~HP the vibration level rises through shaft
-deflection and electromagnetic hum. The static rule still finds the harmonics
-(TDR $=100\%$), but the raised floor pushes $224.6$ noise bins across the same
-line. Detecting every harmonic counts for little when hundreds of bins
-false-alarm alongside it.
+\emph{2) CA-CFAR.} Cell averaging follows the load-dependent floor, and its
+false-alarm share stays between $5.2\%$ and $7.0\%$ at every load. Its detection
+rate moves with the segment: $100\%$ at $0$~HP, $60\%$ at $1$~HP, $86.7\%$ at
+$2$~HP and $100\%$ at $3$~HP. The large standard deviations at $1$ and $2$~HP
+($54.8$ and $29.8$ points) show that some segments lose the higher harmonics
+while others keep them, because the reference window inherits energy from the
+fault lines themselves.
 
-\emph{3) CA-CFAR masking.} Cell averaging follows the load, and its false-alarm
-count stays in single digits. Its weak point is the fault itself. Strong
-harmonics inside the reference window raise the local threshold, and that
-threshold then hides the neighbouring and higher-order harmonics. At $0$~HP the
-rule loses one harmonic of three, which drops the detection rate to $66.7\%$.
+\emph{3) Median--MAD.} The proposed rule returns exactly the same detection
+rate as CA-CFAR at every load, segment for segment, but its false-alarm share is
+higher: $10.3\%$ against $7.0\%$ at $0$~HP, $7.4\%$ against $5.8\%$ at $1$~HP,
+$6.4\%$ against $5.2\%$ at $2$~HP and $7.9\%$ against $6.1\%$ at $3$~HP. The
+median and the MAD are robust to contaminated reference windows, but at
+$\gamma=4.5$ the resulting threshold sits below the cell-averaged one, so the
+robustness is paid for in crossings. The operating point $\gamma$ is the
+parameter that trades those crossings against detection margin.
 
-\emph{4) Median--MAD.} The proposed detector holds $100\%$ at every load, with
-at most $0.6$ false-alarm bins. Neither the median nor the MAD breaks down until
-half the window is contaminated, so the tall impulses in $\mathcal{W}_k$
-cannot lift the threshold that is meant to expose them. The rule is the one
-defined in Section~II-D, Eq.~\eqref{eq:tmad}.
+\emph{4) SNR gain.} The filter and envelope stages add between $19.2$ and
+$26.7$~dB of spectral SNR at the fault harmonics, and the gain is largest at
+full load, where the raw record sits at $-2.06$~dB and the SES reaches
+$+24.60$~dB. The detector choice does not affect this column, because all three
+rules read the same SES.
