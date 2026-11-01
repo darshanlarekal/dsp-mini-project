@@ -1,0 +1,5 @@
+datasets/MFPT/
+datasets/CWRU_Bearing_NumPy/
+outputs/
+MFPT_Report_Outputs/
+__pycache__/
