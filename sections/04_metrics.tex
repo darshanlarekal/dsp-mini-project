@@ -4,9 +4,12 @@
 % ===========================================================================
 \subsection{Evaluation Metrics}
 Four measures are computed on the SES: spectral SNR, true detection rate,
-false-alarm count and execution latency. Each is scored at every load and fault
-size listed in Section~III, and every number reported below is the mean of
-$60$ Monte Carlo runs.
+false-alarm rate and execution latency. Each is scored on every record at every
+load and defect size listed in Section~III. Every CWRU record is split into
+five non-overlapping $2.0$~s segments ($N=24\,000$ samples at $12$~kHz), and
+each segment is processed independently; a reported number is the mean over
+those segments, with the sample standard deviation where stated. The MFPT
+records last $3$~s, so each contributes one $2.0$~s segment.
 
 The data come from the CWRU $2$~HP Reliance Electric rig with a dynamometer
 load and the 6205-2RS drive-end bearing, sampled at $12$~kHz over the four load
@@ -43,11 +46,15 @@ with $\mathbb{I}(\cdot)$ the indicator function and
 $\mathcal{B}_m=[m f_{\text{fault}}(1-0.015),\,m f_{\text{fault}}(1+0.015)]$ the
 slip search boundary.
 
-\emph{3) False-alarm count.} The third measure counts the bins between $15$ and
-$400$~Hz, outside the harmonic masks, that still cross $T[k]$. It is a count
-rather than a percentage on purpose. When the threshold sits too low, the band
-fills with crossings, and the count shows that more plainly than a percentage
-would.
+\emph{3) False-alarm rate.} The third measure is the share of the eligible
+bins above $15$~Hz, outside the harmonic masks, that still cross $T[k]$,
+\begin{equation}
+  \text{FAR} = \frac{100\%}{\left|\mathcal{K}_{N}\right|}
+  \sum_{k\in\mathcal{K}_{N}}\mathbb{I}\!\left(\text{SES}[k]>T[k]\right),
+  \label{eq:far}
+\end{equation}
+where $\mathcal{K}_{N}$ collects the non-harmonic bins above $15$~Hz. A rate
+keeps records with different FFT lengths comparable.
 
 \emph{4) Execution latency.} The last measure is the wall-clock time for one
 $2.0$~s frame ($N=24\,000$ samples at $12$~kHz), taken on the same machine for
