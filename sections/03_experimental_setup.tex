@@ -140,9 +140,12 @@ Blackman    & 0.00000295 \\
 \subsection{Pipeline Parameters}
 Unless stated otherwise, the experiments use $f_s=12$~kHz, a
 $4^{\text{th}}$ order Butterworth bandpass in cascade SOS form with
-forward--backward filtering, an FFT of $N=4096$ (giving
-$\Delta f = 2.93$~Hz) with a Hann window and coherent-gain calibration, guard
-bins $N_G=4$, $N_R=25$ reference bins on each side, $\alpha=3.5$ for CA-CFAR
-and $\gamma=4.5$ for the Median--MAD rule. The static threshold stays at
+forward--backward filtering, a Hann-windowed FFT with coherent-gain
+calibration, guard bins $N_G=4$, $N_R=25$ reference bins on each side,
+$\alpha=3.5$ for CA-CFAR and $\gamma=4.5$ for the Median--MAD rule. The SES
+uses the next power of two above the frame length ($32\,768$ bins for a
+$24\,000$-sample frame, $\Delta f\approx0.37$~Hz), while the baseline spectra
+use the full record length ($\Delta f\approx0.10$~Hz for a $121\,991$-sample
+CWRU record). The static threshold stays at
 $T_{\text{static}}=0.055$ on every record, so any change in its performance
 across loads comes from the load itself.

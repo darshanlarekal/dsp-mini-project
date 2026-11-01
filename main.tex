@@ -50,8 +50,9 @@ Rolling element bearing diagnostics rely on envelope spectrum analysis to
 extract the periodic impulse rates produced by localized surface defects.
 In industrial operation, however, variable mechanical load alters the shaft
 slip, the structural damping and the broadband noise floor, so that fixed
-bandpass filters and static spectral thresholds exhibit high false-alarm
-rates under heavy load and missed detections under light load. This paper
+bandpass filters and static spectral thresholds do not transfer across load:
+the same absolute threshold either misses harmonics or floods the spectrum
+with crossings, depending on the operating point. This paper
 presents a training-free pure Digital Signal Processing (DSP) framework that
 combines Kurtosis-guided resonance demodulation with local noise-floor
 adaptive thresholding in the Squared Envelope Spectrum (SES). Cascade
