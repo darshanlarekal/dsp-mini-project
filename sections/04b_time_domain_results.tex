@@ -9,31 +9,35 @@ $100$~ms ($1200$ samples at $12$~kHz).
 \begin{figure}[H]
 \centering
 \includegraphics[width=\columnwidth]{Fig2_Time_Domain_Progression.png}
-\caption{Time-domain signal progression across a $100$~ms segment:
-(a) pre-processed zero-mean vibration signal $x_0[n]$ dominated by low-frequency
-motor hum and broadband noise ($K = 2.23$), (b) Kurtosis-guided zero-phase SOS
-bandpass filtered output $y_{\text{BP}}[n]$ across $[2000, 4000]$~Hz isolating
-high-frequency resonant impact bursts ($K = 4.58$), and (c) extracted Hilbert
-envelope $|z[n]|$ overlaid on $y_{\text{BP}}[n]$, revealing distinct periodic
+\caption{Time-domain signal progression across a $100$~ms segment of the
+$0$~HP outer-race record: (a) pre-processed zero-mean vibration signal $x_0[n]$
+with periodic impact bursts ($K = 7.56$), (b) Kurtosis-guided zero-phase SOS
+bandpass filtered output $y_{\text{BP}}[n]$ across $[4909, 5455]$~Hz isolating
+the resonance that carries the impacts ($K = 7.81$), and (c) extracted Hilbert
+envelope $|z[n]|$ overlaid on $y_{\text{BP}}[n]$, revealing the periodic
 bearing fault impulses.}
 \label{fig:time_progression}
 \end{figure}
 
-In Fig.~\ref{fig:time_progression}(a) the zero-mean record is dominated by
-low-frequency shaft and motor oscillation, with broadband noise on top. At
-$107.36$~Hz the $100$~ms window holds about eleven impacts, yet the impacts are
-buried. The kurtosis is $2.23$, below the Gaussian value of $3.0$,
-and no individual strike can be picked out by eye.
+In Fig.~\ref{fig:time_progression}(a) the zero-mean record already shows the
+impact train. At $107.36$~Hz the $100$~ms window holds about eleven bursts,
+each an underdamped ringing of the structural resonance, spaced by roughly
+$9.3$~ms. The signal is impulsive: its kurtosis is $7.56$, well above the
+Gaussian value of $3.0$, because the impacts populate the tails of the
+amplitude distribution.
 
 In Fig.~\ref{fig:time_progression}(b) the signal has passed through the
-Kurtosis-guided zero-phase SOS filter for $[2000, 4000]$~Hz. The motor hum is
-gone. What remains is a train of underdamped bursts, one per impact on the outer
-race. Stripping the low-frequency energy and keeping the phase aligned raises
-the kurtosis from $2.23$ to $4.58$, more than double.
+Kurtosis-guided zero-phase SOS filter for $[4909, 5455]$~Hz. The low-frequency
+shaft and motor content is removed and the resonance bursts remain, one per
+impact on the outer race. The kurtosis moves from $7.56$ to $7.81$: the band
+concentrates the impulsive energy, but the raw record is already impulsive, so
+this statistic changes little. The band choice still matters for the envelope,
+because it removes the low-frequency floor that would otherwise dominate the
+demodulated spectrum.
 
 Fig.~\ref{fig:time_progression}(c) overlays the Hilbert envelope $|z[n]|$ on the
-filtered waveform. The envelope follows the top of each burst, so the $3000$~Hz
-carrier becomes a sequence of positive pulses. Their spacing is
+filtered waveform. The envelope follows the top of each burst, so the
+$5.2$~kHz carrier becomes a sequence of positive pulses. Their spacing is
 $\Delta t \approx 9.31$~ms, which is $1/107.36$~Hz, the outer-race fault
 frequency. The spacing of the envelope peaks, not their height, carries the
 fault information here. That envelope is what the SES stage consumes.
