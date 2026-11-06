@@ -10,23 +10,27 @@ so the fault rate is almost invisible in the spectrum. It has to be moved
 down to a low-frequency region, where the harmonics are far apart and easy to
 separate. That operation is demodulation.
 
-The first step is the analytic signal, built with the Discrete Hilbert
-Transform~\cite{oppenheim}:
+The first step is the analytic signal,
 \begin{equation}
   z[n] = y_{\text{BP}}[n] + j\hat{y}_{\text{BP}}[n],
   \label{eq:analytic}
 \end{equation}
 where $\hat{y}_{\text{BP}}[n]=\mathcal{H}\{y_{\text{BP}}[n]\}$ is the Hilbert
-transform of the filtered signal. A real record has a spectrum on both sides
-of $0$~Hz, and the two halves mirror each other. The transform keeps the
-positive half and drops the rest, which is what makes the envelope
-well defined. It works as a $90^\circ$ phase shifter,
+transform of the filtered signal.
+
+The Hilbert transform on its own removes nothing. It is an all-pass phase
+shifter, delaying positive frequencies by $\pi/2$ and advancing negative
+frequencies by $\pi/2$:
 \begin{equation}
-  H_{\text{Hilbert}}(e^{j\omega}) = -j\,\operatorname{sgn}(\omega),
+  H_{\text{Hilbert}}(e^{j\omega}) = -j\,\operatorname{sgn}(\omega).
   \label{eq:hilbert}
 \end{equation}
-so every positive frequency is shifted by $-\pi/2$ and the negative
-frequencies are removed.
+The frequency cancellation happens when the analytic signal is formed. With
+$Y_{\text{BP}}(e^{j\omega})$ the spectrum of the real bandpass record,
+$Z(e^{j\omega}) = \left(1 + \operatorname{sgn}(\omega)\right)
+Y_{\text{BP}}(e^{j\omega})$: the positive-frequency half is doubled and the
+negative-frequency half is set to zero. The result $z[n]$ is complex, and that
+is what makes a well-defined envelope possible.
 
 The usual envelope takes a square root of $y_{\text{BP}}^2+\hat{y}_{\text{BP}}^2$.
 The squared envelope is used here instead:
@@ -34,14 +38,17 @@ The squared envelope is used here instead:
   e[n] = |z[n]|^2 = z[n]z^{*}[n] = y_{\text{BP}}^2[n] + \hat{y}_{\text{BP}}^2[n].
   \label{eq:se}
 \end{equation}
-Squaring does two useful things. A square in time is an
-auto-convolution in frequency, so the modulation theorem moves the carrier
-$\omega_r$ down to baseband ($0$~Hz) without distortion. A square root does
-not behave this way. It is non-linear, and the intermodulation harmonics it
-adds can hide a weak fault. Squaring also favours large amplitudes: an impact
-peak is squared into a much larger number, while the background changes
-little. The fault-to-noise ratio therefore improves before any threshold is
-applied.
+Squaring in time is an auto-convolution in frequency:
+$E(e^{j\omega}) = \frac{1}{2\pi} Z(e^{j\omega}) * Z(e^{j\omega})$, which places
+a copy of the modulation spectrum at baseband ($0$~Hz) and another at twice the
+carrier; the baseband copy is the one kept, so the modulation theorem recovers
+the fault rate without distortion. A square root does not behave this way. It
+is non-linear, and the intermodulation harmonics it adds can hide a weak
+fault. Squaring also favours large amplitudes: an impact peak is squared into
+a much larger number, while the background changes little, so the impulses
+stand farther above the noise than they do in $|z[n]|$. The fault-to-noise
+ratio therefore improves before any threshold is applied, and no per-sample
+square root is needed.
 
 The squared envelope is never negative, so it carries a large DC term. That
 term is much bigger than the fault harmonics, and its mainlobe leaks into the
@@ -66,16 +73,21 @@ The window brings both ends to zero, which halves the coherent amplitude. It
 also widens the mainlobe, so a little frequency resolution is lost, and that
 trade is accepted for the much lower sidelobes. The coherent gain
 \begin{equation}
-  CG = \frac{1}{N}\sum_{n=0}^{N-1}w[n] = \tfrac12
+  CG = \frac{1}{N}\sum_{n=0}^{N-1}w[n] = \frac{N-1}{2N} \approx \frac{1}{2}
   \label{eq:cg}
 \end{equation}
 puts the amplitude back, so the SES levels keep their physical meaning. The
 one-sided SES is then computed with an
 $N_{\text{FFT}}$-point radix-2 FFT:
 \begin{equation}
-  \text{SES}[k] = \frac{2}{N\cdot CG}\left|\sum_{n=0}^{N-1} w[n]\,e_0[n]\,
+  \text{SES}[k] = \frac{c_k}{N\cdot CG}\left|\sum_{n=0}^{N-1} w[n]\,e_0[n]\,
   e^{-j\frac{2\pi}{N_{\text{FFT}}}kn}\right|,
   \label{eq:ses}
 \end{equation}
 for $k=0,1,\dots,N_{\text{FFT}}/2$, where bin $k$ corresponds to
-$f_k=k\,f_s/N_{\text{FFT}}$~Hz.
+$f_k=k\,f_s/N_{\text{FFT}}$~Hz. The scale is $c_k=2$ for the interior bins
+$1 \le k < N_{\text{FFT}}/2$ and $c_k=1$ at DC ($k=0$) and at Nyquist
+($k=N_{\text{FFT}}/2$), which have no negative-frequency twin. Zero-padding a
+$24\,000$-sample frame to $N_{\text{FFT}}=32\,768$ interpolates the DFT grid to
+$\Delta f\approx0.37$~Hz, but the physical resolution is still set by the
+$2.0$~s window ($0.5$~Hz).

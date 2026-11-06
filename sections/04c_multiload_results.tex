@@ -6,22 +6,25 @@
 \centering
 \includegraphics[width=0.95\textwidth]{Fig3_MultiLoad_SES_Thresholding.png}
 \caption{Calibrated SES and comparative thresholding at four motor loads for
-the outer-race $7$~mil record. The static threshold of $0.055$ sits above the
-SES at every load and marks no harmonic; CA-CFAR and Median--MAD follow the
-load-dependent floor and flag all three BPFO harmonics in every panel.}
+the outer-race $7$~mil record. The static threshold is calibrated once on the
+$0$~HP reference ($T_{\text{static}}=0.00228$); it marks two of the three BPFO
+harmonics in the $0$~HP panel, none in the $1$~HP panel and all three in the
+$2$ and $3$~HP panels. CA-CFAR and Median--MAD follow the load-dependent floor
+and flag all three BPFO harmonics in every panel.}
 \label{fig:ses}
 \end{figure*}
 
 \subsection{Multi-Load Adaptive Thresholding}
 Fig.~\ref{fig:ses} shows the calibrated SES and the three thresholds for an
 outer-race defect at the four motor loads of Table~\ref{tab:kinematics}. The
-fixed threshold is not scale-invariant: at $0.055$ it lies above the whole
-spectrum in all four panels, so no BPFO harmonic crosses it and the static rule
-marks nothing. Across the five benchmark segments it fires only in one $0$~HP
-segment that contains an unusually large transient, which is why its detection
-rate in Table~\ref{tab:benchmark} is not zero. The adaptive rules behave
-differently. Both CA-CFAR and Median--MAD follow the load-dependent floor, and
-both flag the $1\times$, $2\times$ and $3\times$ BPFO harmonics in every panel,
-so the harmonic comb survives the load change once the threshold tracks the
-noise. The two adaptive rules differ quantitatively rather than qualitatively;
-Table~\ref{tab:benchmark} measures that difference.
+fixed threshold is calibrated once at $0$~HP and then held at
+$0.00228$. It is not scale-invariant: in the first segment it marks two of the
+three BPFO harmonics at $0$~HP, none at $1$~HP, and all three at $2$ and
+$3$~HP, while its crossing share swings from $0\%$ to $2\%$ between panels.
+Across the five benchmark segments the same level produces a detection rate
+between $40$ and $80\%$ with standard deviations up to $55$ points, so whether
+a harmonic clears it depends on the segment rather than on the load. The
+adaptive rules behave differently. Both CA-CFAR and Median--MAD follow the
+load-dependent floor and flag the $1\times$, $2\times$ and $3\times$ BPFO
+harmonics in every panel, with crossing shares between $3.7$ and $8.6\%$.
+Table~\ref{tab:benchmark} measures the difference quantitatively.

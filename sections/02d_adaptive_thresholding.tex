@@ -51,13 +51,15 @@ The proposed rule uses order statistics instead of the mean:
 \end{aligned}
   \label{eq:medmad}
 \end{equation}
-For Gaussian noise the MAD scales to a standard deviation with the factor
-$1.4826$, the value that makes the two agree for a normal distribution,
+The factor $1.4826$ is the standardized nominal scale that makes the MAD
+agree with the standard deviation for a normal distribution,
 \begin{equation}
   \hat{\sigma}_{\text{local}}[k]=1.4826\,\text{MAD}[k],
   \label{eq:madscale}
 \end{equation}
-and the threshold is
+and it is used here as a fixed scale factor rather than as an unbiased
+estimate of a Gaussian $\sigma$, because the SES floor is not Gaussian.
+The threshold is
 \begin{equation}
   T_{\text{MAD}}[k]=\hat{m}[k]+\gamma\left(1.4826\,\text{MAD}[k]\right),
   \label{eq:tmad}
@@ -85,3 +87,10 @@ harmonic orders and wide enough to cover the slip. A harmonic is present when
   \max_{f_k\in\mathcal{B}_h}\left(\text{SES}[k]-T_{\text{MAD}}[k]\right) > 0.
   \label{eq:decision}
 \end{equation}
+
+The exceedance rate that this rule produces is not a thermal-noise
+false-alarm probability. On a bearing SES the eligible non-harmonic bins
+contain unmasked shaft harmonics and modulation sidebands, so the measured
+rate counts the discrete interference lines that the harmonic mask did not
+cover; that is the quantity that matters for a detector operating on this
+kind of spectrum.

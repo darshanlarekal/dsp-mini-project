@@ -5,39 +5,52 @@
 \subsection{Finite-Word-Length and Quantization Error Analysis}
 On a microcontroller or a fixed-point DSP every value carries a limited number
 of bits, so the rounding along the chain has to be checked. The design was
-evaluated in a $16$-bit Q$1.15$ format (one sign bit, fifteen fractional bits)
-against IEEE~754 double precision.
+evaluated against IEEE~754 double precision with the coefficients in Q$2.14$
+(one sign bit, one integer bit, fourteen fractional bits) and the signal bus in
+Q$1.15$ (one sign bit, fifteen fractional bits).
 
 \emph{1) Filter structure and stability.} Direct-form IIR filters are sensitive
 to coefficient rounding. A pole can land on the unit circle or outside it. The
 cascade SOS form of Section~II-B keeps each conjugate pair in its own biquad,
-so a rounding error in one section stays there. The largest pole radius of the
-designed filter is $r_{\max}=0.9626$; the region of convergence $|z|>0.9626$
-contains the unit circle, so the cascade stays BIBO stable.
+so a rounding error in one section stays there. The overall gain is factored
+out as in Eq.~(14), $G=\prod_k b_{0k}$, and each numerator is divided by its
+own $b_{0k}$ so that $b_{0k}=1$ and $b_{1k},b_{2k}$ stay inside $[-2,2)$. The
+two sections whose $b_1/b_0=+2$ are rescaled by $1/2$, because $+2$ lies just
+outside the Q$2.14$ range, and the factor is absorbed into $G$. The largest
+pole radius of the designed filter is $r_{\max}=0.96263$; after Q$2.14$
+rounding it becomes $r_{\max,q}=0.96262$, still strictly inside the unit
+circle, so the quantized cascade stays BIBO stable.
 
-\emph{2) Quantization noise and SQNR.} Over the filtered passband the
-signal-to-quantization-noise ratio is $29.76$~dB. For $B=16$ bits the
-theoretical limit is
+\emph{2) Quantization noise and SQNR.} The input, the output of every section
+and the bus between sections are rounded to Q$1.15$; a power-of-two scale after
+each section keeps that bus inside $[-1,1)$, and the overall gain is restored
+at the output. Rounding the high-$Q$ denominator coefficients to Q$2.14$
+shifts the passband gain slightly, so a gain trim evaluated on the realized
+cascade at the band centre is folded into $G$. Over the steady-state part of
+the filtered block (the first and last $0.5$~s are excluded, where the zero
+initial state and the reverse-pass edge transient dominate) the measured
+signal-to-quantization-noise ratio is $70.05$~dB. For $B=16$ bits the
+theoretical signal-bus limit is
 \begin{equation}
   \text{SQNR}_{\text{theoretical}} \approx 6.02B + 1.76~\text{dB}
   = 98.08~\text{dB},
   \label{eq:sqnr}
 \end{equation}
-so the implementation lands about $68$~dB below the ideal figure. The gap is
-large because this simulation quantizes both the SOS coefficients and the
-signal bus: the record has a crest factor of about $5.3$, so the Q$1.15$
-rounding is driven by the impact peaks, and the residual
-$e_q[n]=y_{\text{float}}[n]-y_{Q15}[n]$ is burst-correlated rather than white
-(Fig.~\ref{fig:fwl}(b)). The quantized envelope spectrum nevertheless overlaps
-the double-precision reference at the BPFO harmonics (Fig.~\ref{fig:fwl}(a)),
-so the harmonic decision is unchanged.
+so the implementation lands about $28$~dB below the ideal figure. The gap is
+coefficient-limited: Q$2.14$ rounds $a_1$ and $a_2$ by up to $3\times10^{-5}$,
+and for poles at radius $0.9626$ that is already a measurable perturbation of
+the resonance. The residual $e_q[n]=y_{\text{float}}[n]-y_{Q15}[n]$ is
+burst-correlated rather than white (Fig.~\ref{fig:fwl}(b)), because the
+quantization error follows the impact envelope. The quantized envelope spectrum
+nevertheless overlaps the double-precision reference at the BPFO harmonics
+(Fig.~\ref{fig:fwl}(a)), so the harmonic decision is unchanged.
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{Figure4_Benchmarking_and_FWL_Analysis.png}
 \caption{Finite-word-length evaluation on the $0$~HP outer-race record:
-(a) calibrated SES under Q$1.15$ fixed-point filtering against the float64
-reference, (b) quantization residual $e_q[n]$ over a $50$~ms window, and
-(c) detector TDR across the four CWRU loads.}
+(a) calibrated SES under Q$2.14$ coefficients and a Q$1.15$ signal bus against
+the float64 reference, (b) quantization residual $e_q[n]$ over a $50$~ms window
+starting at $0.5$~s, and (c) detector TDR across the four CWRU loads.}
 \label{fig:fwl}
 \end{figure*}

@@ -22,24 +22,29 @@ $f_{\text{BPFI}}=162.19$~Hz at no load, serve as ground truth.
 against the local noise floor,
 \begin{equation}
   \text{SNR}_{\text{SES}} = 10\log_{10}
-  \frac{\sum_{m=1}^{M}\left|\text{SES}[k_m]\right|^{2}}
+  \frac{\frac{1}{M}\sum_{m=1}^{M}
+  \max_{k\in\mathcal{B}_m}\left|\text{SES}[k]\right|^{2}}
   {\frac{1}{\left|\mathcal{K}_{\text{noise}}\right|}
   \sum_{k\in\mathcal{K}_{\text{noise}}}\left|\text{SES}[k]\right|^{2}},
   \label{eq:snrses}
 \end{equation}
-where $k_m$ runs over the bins inside the $\pm1.5\%$ slip window
-$\mathcal{B}_m$ around each harmonic $m f_{\text{fault}}$, and
-$\mathcal{K}_{\text{noise}}$ collects the non-harmonic bins of the
-$10$--$400$~Hz demodulation band. The difference
-$\Delta\text{SNR}=\text{SNR}_{\text{SES}}-\text{SNR}_{\text{raw}}$ is the gain
-the filter and envelope stages add.
+where $\mathcal{B}_m$ is the $\pm1.5\%$ slip window around harmonic
+$m f_{\text{fault}}$, so the numerator is the mean of the three per-harmonic
+peak powers, and $\mathcal{K}_{\text{noise}}$ collects the non-harmonic bins
+of the evaluation band above $10$~Hz. The raw baseline uses the identical
+estimator on $x_0[n]$: a Hann-windowed, zero-padded one-sided FFT amplitude
+spectrum cropped to the same band. The difference
+$\Delta\text{SNR}=\text{SNR}_{\text{SES}}-\text{SNR}_{\text{raw}}$ is therefore
+the gain the filter and envelope stages add, not an artefact of two different
+spectral estimators.
 
 \emph{2) True detection rate.} The second measure is the share of the targeted
 harmonics ($1\times$, $2\times$ and $3\times f_{\text{fault}}$) that clear the
 threshold,
 \begin{equation}
   \text{TDR} = \frac{1}{M}\sum_{m=1}^{M}
-  \mathbb{I}\!\left(\max_{k\in\mathcal{B}_m}\text{SES}[k] > T[k]\right)\times100\%,
+  \mathbb{I}\!\left(\max_{k\in\mathcal{B}_m}
+  \left(\text{SES}[k]-T[k]\right) > 0\right)\times100\%,
   \label{eq:tdr}
 \end{equation}
 with $\mathbb{I}(\cdot)$ the indicator function and

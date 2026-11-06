@@ -47,6 +47,13 @@ band $i$ has bandwidth and center frequency
   f_{c,i} = \left(i + \frac{1}{2}\right)\Delta f_k
 \end{equation}
 
+The search is restricted to the band $[1000~\text{Hz},\ f_s/2-150~\text{Hz}]$.
+The lower guard removes the crowded region below $1000$~Hz, where shaft
+harmonics, motor hum and load-dependent friction noise sit; the upper guard
+keeps the transition band of the acquisition anti-alias filter out of the
+search. Any sub-band that crosses either guard is scored $-\infty$, so an
+excluded band can never win the maximization.
+
 For each band output $y_{k,i}[n]$, impulsiveness is measured by the fourth
 standardized central moment, the Kurtosis~\cite{antoni2006}:
 \begin{equation}
@@ -112,7 +119,12 @@ cutoffs are pre-warped before the prototype is transformed:
   \quad k \in \{1, 2\}
 \end{equation}
 After pre-warping, the $-3$~dB points land exactly on $f_{\text{low}}$ and
-$f_{\text{high}}$, and the passband stays maximally flat.
+$f_{\text{high}}$, and the passband stays maximally flat. These are the
+single-pass points. The forward--backward filter used here squares the
+magnitude response, so the same design points appear at $-6$~dB in the
+effective zero-phase response. The zero-phase filter operates on buffered
+$2.0$~s blocks rather than on a sample-by-sample causal stream: the whole
+block is available before the reverse pass begins.
 
 \subsubsection{Cascade SOS Realization and Zero-Phase Filtering}
 A $4^{\text{th}}$-order bandpass has eight poles. Written in direct form, that is
@@ -146,5 +158,7 @@ so
 \end{equation}
 That response is real and non-negative, so the phase is zero and the group delay
 is zero samples. The impacts keep their time positions and their shape, and the
-stopband attenuation doubles in decibels. The passband edge shifts a little
-inward, because the effective filter is the square of the one that was designed.
+stopband attenuation doubles in decibels: a single-pass $-3$~dB edge becomes
+$-6$~dB and a $-40$~dB stopband becomes $-80$~dB. The passband edge shifts a
+little inward, because the effective filter is the square of the one that was
+designed.

@@ -40,9 +40,13 @@ DC and Nyquist are blocked completely.
 
 Fig.~\ref{fig:filter_comparison}(b) compares magnitudes. Both filters are flat
 at $0$~dB across $[4909, 5455]$~Hz, and both reject the motor region below
-$1000$~Hz by more than $100$~dB. The $129$-tap FIR rolls off faster and reaches
-below $-110$~dB, but it costs $129$ multiply-accumulate operations per sample.
-The four-section SOS filter needs $4 \times 5 = 20$, which is $84\%$ fewer.
+$1000$~Hz by more than $100$~dB. The $129$-tap FIR rolls off faster: it
+reaches below $-80$~dB within the transition and below $-110$~dB far from the
+passband. The price is arithmetic. One FIR pass costs $129$ multiply-accumulate
+(MAC) operations per sample. The four-section SOS cascade costs $4 \times 5 =
+20$ MACs per pass, and the zero-phase forward--backward filter runs two passes
+over the buffered block, so $2 \times 4 \times 5 = 40$ MACs per sample. That is
+$69\%$ fewer operations than the $129$-tap FIR.
 
 Fig.~\ref{fig:filter_comparison}(c) is the unwrapped phase. The FIR phase is
 exactly linear, the signature of a symmetric Type-I design, while the IIR phase

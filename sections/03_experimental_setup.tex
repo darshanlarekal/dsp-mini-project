@@ -3,16 +3,16 @@
 % Owner: Member 1
 % ===========================================================================
 \subsection{Bearing Kinematics}
-Let $f_r=\text{RPM}/60$ be the shaft frequency, $n_b$ the number of rolling
+Let $f_{\text{rot}}=\text{RPM}/60$ be the shaft frequency, $n_b$ the number of rolling
 elements, $d$ and $D$ the element and pitch diameters and $\alpha$ the contact
 angle. With the diameter ratio $\rho=(d/D)\cos\alpha$, the ideal
 characteristic frequencies are
 \begin{equation}
 \begin{aligned}
-  f_{\text{BPFO}} &= \frac{n_b}{2}f_r\left(1-\rho\right), &
-  f_{\text{BPFI}} &= \frac{n_b}{2}f_r\left(1+\rho\right),\\
-  f_{\text{BSF}} &= \frac{D}{2d}f_r\left(1-\rho^{2}\right), &
-  f_{\text{FTF}} &= \frac{f_r}{2}\left(1-\rho\right),
+  f_{\text{BPFO}} &= \frac{n_b}{2}f_{\text{rot}}\left(1-\rho\right), &
+  f_{\text{BPFI}} &= \frac{n_b}{2}f_{\text{rot}}\left(1+\rho\right),\\
+  f_{\text{BSF}} &= \frac{D}{2d}f_{\text{rot}}\left(1-\rho^{2}\right), &
+  f_{\text{FTF}} &= \frac{f_{\text{rot}}}{2}\left(1-\rho\right),
 \end{aligned}
   \label{eq:kinematics}
 \end{equation}
@@ -146,6 +146,10 @@ $\alpha=3.5$ for CA-CFAR and $\gamma=7.0$ for the Median--MAD rule. The SES
 uses the next power of two above the frame length ($32\,768$ bins for a
 $24\,000$-sample frame, $\Delta f\approx0.37$~Hz), while the baseline spectra
 use the full record length ($\Delta f\approx0.10$~Hz for a $121\,991$-sample
-CWRU record). The static threshold stays at
-$T_{\text{static}}=0.055$ on every record, so any change in its performance
-across loads comes from the load itself.
+CWRU record). The three thresholds are estimated on the SES up to $650$~Hz and only then
+cropped to the evaluation band, so the CFAR reference windows keep their
+right-hand cells. The static threshold is calibrated once on the first
+$2.0$~s segment of the $0$~HP outer-race reference, at $T_{\text{static}}=
+0.00228$ (the largest Median--MAD level found in its three BPFO harmonic
+windows), and then held fixed on every record. Any change in its performance
+across loads or datasets therefore comes from the data, not from re-tuning.
