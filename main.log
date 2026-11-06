@@ -1117,6 +1117,66 @@ it/10 :\OT1/minntx/m/n/10 14$
 ) (sections/appendix_baseline
 File: figures/figure_1.png Graphic file (type bmp)
 <figures/figure_1.png>
+Requested font "ntx-Regular-tlf-ot1" at 12.0pt
+ -> ntx-Regular-tlf-ot1
+Requested font "ntx-Regular-tlf-ot1" at 8.8pt
+ -> ntx-Regular-tlf-ot1
+Requested font "ntx-Regular-tlf-ot1" at 6.6pt
+ -> ntx-Regular-tlf-ot1
+Requested font "ntxmi" at 12.0pt
+ -> ntxmi
+Requested font "ntxmi" at 8.8pt
+ -> ntxmi
+Requested font "ntxmi7" at 6.6pt
+ -> ntxmi7
+Requested font "ntxsy" at 12.0pt
+ -> ntxsy
+Requested font "ntxsy" at 8.8pt
+ -> ntxsy
+Requested font "ntxsy7" at 6.6pt
+ -> ntxsy7
+Requested font "ntxexx" at 12.0pt
+ -> ntxexx
+Requested font "ntxexx" at 8.8pt
+ -> ntxexx
+Requested font "ntxexx" at 6.6pt
+ -> ntxexx
+Requested font "msam10" at 12.0pt
+ -> msam10
+Requested font "msam10" at 8.8pt
+ -> msam10
+Requested font "msam7" at 6.6pt
+ -> msam7
+Requested font "msbm10" at 12.0pt
+ -> msbm10
+Requested font "msbm10" at 8.8pt
+ -> msbm10
+Requested font "msbm7" at 6.6pt
+ -> msbm7
+Requested font "ntxmia" at 12.0pt
+ -> ntxmia
+Requested font "ntxmia" at 8.8pt
+ -> ntxmia
+Requested font "ntxmia" at 6.6pt
+ -> ntxmia
+Requested font "ntxsym" at 12.0pt
+ -> ntxsym
+Requested font "ntxsym" at 8.8pt
+ -> ntxsym
+Requested font "ntxsym" at 6.6pt
+ -> ntxsym
+Requested font "ntxsyc" at 12.0pt
+ -> ntxsyc
+Requested font "ntxsyc" at 8.8pt
+ -> ntxsyc
+Requested font "ntxsyc" at 6.6pt
+ -> ntxsyc
+Requested font "ntxexa" at 12.0pt
+ -> ntxexa
+Requested font "ntxexa" at 8.8pt
+ -> ntxexa
+Requested font "ntxexa" at 6.6pt
+ -> ntxexa
 File: figures/figure_2.png Graphic file (type bmp)
 <figures/figure_2.png>
 File: figures/figure_3.png Graphic file (type bmp)
@@ -1130,17 +1190,12 @@ File: figures/figure_6.png Graphic file (type bmp)
 <figures/figure_6.png>
 File: figures/figure_7.png Graphic file (type bmp)
 <figures/figure_7.png>
-) (sections/backmatter) (sections/references
-Underfull \hbox (badness 1377) in paragraph at lines 6--5
-[]\TU/TeXGyreTermesX(0)/b/n/10 Vidyashankar T \TU/TeXGyreTermesX(0)/m/n/10 cura
-ted the datasets, formulated the
- []
-
-) [10] (main.aux)
+) (sections/backmatter) (sections/references)
+[10] (main.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: BA709D990CF3B5F0183D48928709E179;7718.
+(rerunfilecheck)             Checksum: 5697603AC38C4B39B97FCAD76C8636A4;7718.
  )
-Output written on main.xdv (10 pages, 444824 bytes).
+Output written on main.xdv (10 pages, 445144 bytes).
