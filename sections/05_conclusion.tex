@@ -17,7 +17,7 @@ envelope spectrum, gives five results.
   \item Across all $36$ CWRU fault records the adaptive rules raised the mean
         TDR from $40.9\%$ (static) to $57.8\%$ (CA-CFAR) and $56.3\%$
         (Median--MAD) and cut the mean FAR from $10.7\%$ to $5.0\%$ and
-        $4.5\%$; on the MFPT fault records both reached $100\%$ TDR at FAR
+        $4.4\%$; on the MFPT fault records both reached $100\%$ TDR at FAR
         $1.7$--$2.2\%$ while the CWRU-calibrated level flooded $89$--$100\%$ of
         the bins, and on the healthy baselines the adaptive rules stayed at
         $0.0$--$1.9\%$ crossings.
@@ -42,19 +42,19 @@ edge device.
         at $16$~bits per component needs $128$~kB, a working set of about
         $176$~kB that fits an STM32H7 Cortex-M7 part.
   \item \emph{Execution latency.} The interpreted Python (CPython/Colab)
-        pipeline takes $0.35$--$0.42$~s for a $2.0$~s CWRU window, so the duty
+        pipeline takes $0.29$--$0.50$~s for a $2.0$~s CWRU window, so the duty
         cycle is
 \begin{equation}
   \eta = \frac{T_{\text{compute}}}{T_{\text{acquire}}}
-  \approx \frac{0.35\text{--}0.42~\text{s}}{2.0~\text{s}}
-  = 18\text{--}21\%.
+  \approx \frac{0.29\text{--}0.50~\text{s}}{2.0~\text{s}}
+  = 15\text{--}25\%.
   \label{eq:duty}
 \end{equation}
-        Even uncompiled the chain runs about five times faster than real time,
-        so the processor idles for four fifths of the timeline; this is a
-        software timing, not an embedded benchmark. The MFPT records, sampled
-        at $48.828$~kHz, take $0.81$--$0.90$~s per $2.0$~s segment
-        ($41$--$45\%$ duty).
+        Even uncompiled the chain runs several times faster than real time, so
+        the processor idles for three quarters of the timeline or more; this is
+        a software timing, not an embedded benchmark. The MFPT records, sampled
+        at $48.828$~kHz, take $0.67$--$0.92$~s per $2.0$~s segment
+        ($34$--$46\%$ duty).
   \item \emph{Fixed-point suitability.} The $70.05$~dB Q$1.15$/Q$2.14$ SQNR
         sits $28$~dB below the $98.08$~dB signal-bus ideal because the high-$Q$
         denominator coefficients are rounded to $16$ bits. The harmonic

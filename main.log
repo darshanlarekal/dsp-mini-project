@@ -1097,8 +1097,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 44--47
 
 Underfull \hbox (badness 2269) in paragraph at lines 44--47
 \TU/TeXGyreTermesX(0)/m/n/10 (CPython/Colab) pipeline takes $\OT1/minntx/m/n/10
- 0\OML/ntxmi/m/it/10 :\OT1/minntx/m/n/10 35$\TU/TeXGyreTermesX(0)/m/n/10 –$\OT1
-/minntx/m/n/10 0\OML/ntxmi/m/it/10 :\OT1/minntx/m/n/10 42$ \TU/TeXGyreTermesX(0
+ 0\OML/ntxmi/m/it/10 :\OT1/minntx/m/n/10 29$\TU/TeXGyreTermesX(0)/m/n/10 –$\OT1
+/minntx/m/n/10 0\OML/ntxmi/m/it/10 :\OT1/minntx/m/n/10 50$ \TU/TeXGyreTermesX(0
 )/m/n/10 s for a
  []
 
@@ -1122,6 +1122,7 @@ File: figures/figure_4.png Graphic file (type bmp)
 <figures/figure_4.png>
 File: figures/figure_5.png Graphic file (type bmp)
 <figures/figure_5.png>
+ [9]
 File: figures/figure_6.png Graphic file (type bmp)
 <figures/figure_6.png>
 File: figures/figure_7.png Graphic file (type bmp)
@@ -1132,11 +1133,11 @@ Underfull \hbox (badness 1377) in paragraph at lines 6--5
 ted the datasets, formulated the
  []
 
-[9]) [10] (main.aux)
+) [10] (main.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: BA709D990CF3B5F0183D48928709E179;7718.
  )
-Output written on main.xdv (10 pages, 443960 bytes).
+Output written on main.xdv (10 pages, 444364 bytes).
