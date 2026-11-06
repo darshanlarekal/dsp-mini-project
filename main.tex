@@ -23,6 +23,13 @@
 
 \graphicspath{{./}{./figures/}}
 
+% Float gaps: tightened so the appendix figures pack without altering text
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\dblfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{10pt plus 2pt minus 2pt}
+
 \hyphenation{op-tical net-works semi-conduc-tor kur-to-sis en-ve-lope}
 
 % Placeholder box: \figbox{height}{width}{caption text}
@@ -116,7 +123,9 @@ thresholding.
 \input{sections/05_conclusion}
 % ---------------------------------------------------------------------------
 \appendices
+{\raggedbottom
 \input{sections/appendix_baseline} % Member 1
+}
 
 \input{sections/backmatter}
 \input{sections/references}
