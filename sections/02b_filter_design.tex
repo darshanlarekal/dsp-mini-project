@@ -5,37 +5,30 @@
 \subsection{Pre-Processing and Kurtosis-Guided Bandpass Filter Design}
 
 \subsubsection{DC Offset Removal and Detrending}
-Accelerometers come with a DC offset. The sensor electronics and the signal
-conditioning hardware add a constant bias, and it appears as a large peak at
-$0$~Hz. Its sidelobes then leak into the low-frequency bins that matter. Before
-any filtering, the signal $x[n]$ of length $N$ is centered by subtracting its
-sample mean:
+Sensor electronics add a constant bias, which appears as a large peak at
+$0$~Hz whose sidelobes leak into the low-frequency bins that matter. Before any
+filtering, the signal $x[n]$ of length $N$ is centered by subtracting its sample
+mean:
 \begin{equation}
   x_0[n] = x[n] - \mu_x, \quad \text{where} \quad
   \mu_x = \frac{1}{N}\sum_{m=0}^{N-1} x[m]
 \end{equation}
-In the frequency domain this removes the $\omega = 0$ term of the DTFT:
-\begin{equation}
-  X_0(e^{j0}) = \sum_{n=0}^{N-1} x_0[n] = 0
-\end{equation}
-After this step the filter bank sees only the vibration riding on a zero
-baseline. The subtraction is exact in the DFT sense: it changes the bin at
-$\omega = 0$ and leaves every other coefficient untouched.
+In the DFT sense this sets $X_0(e^{j0})=\sum_{n=0}^{N-1}x_0[n]=0$ and leaves
+every other coefficient untouched, so the filter bank sees only the vibration
+riding on a zero baseline.
 
 \subsubsection{Sub-Band Kurtosis Resonance Selection}
-Below about $1000$~Hz the spectrum is crowded. Shaft harmonics, structural
-vibration and load-dependent friction noise all sit there, and they hide the
-bearing impulses. The impulses themselves are short impacts. Each time a
-rolling element hits a defect on the raceway, it excites a high-frequency
-resonance of the housing. That band carries sharp bursts. The low-frequency
-interference is stationary and does not. A resonance belongs to the structure,
-not to the fault: it rings at about the same frequency after every impact, which
-is why one band can collect many bursts at once.
+Below about $1000$~Hz the spectrum is crowded with shaft harmonics, structural
+vibration and load-dependent friction noise, which hide the bearing impulses.
+Each time a rolling element hits a defect it excites a high-frequency resonance
+of the housing, and that band carries sharp bursts while the low-frequency
+interference stays stationary. The resonance belongs to the structure, not to
+the fault, which is why one band collects many bursts at once.
 
-A fixed bandpass filter cannot find the resonance reliably, because the
-frequency depends on the machine and on how it is mounted. The band has to be
-picked per record. A filter bank built on the Fast Kurtogram~\cite{antoni2007}
-does this without training data. The Nyquist interval $[0, f_s/2]$ is split at
+The resonance depends on the machine and its mounting, so a fixed bandpass
+filter cannot find it reliably and the band has to be picked per record. A
+filter bank built on the Fast Kurtogram~\cite{antoni2007} does this without
+training data. The Nyquist interval $[0, f_s/2]$ is split at
 dyadic and half-integer levels. On a $12$~kHz record the limit is $6000$~Hz, so
 the dyadic levels give bands of $3000$, $1500$, $750$~Hz and so on, while the
 half-integer levels add widths of $2000$, $1000$ and $545.5$~Hz. The $545.5$~Hz
@@ -47,12 +40,10 @@ band $i$ has bandwidth and center frequency
   f_{c,i} = \left(i + \frac{1}{2}\right)\Delta f_k
 \end{equation}
 
-The search is restricted to the band $[1000~\text{Hz},\ f_s/2-150~\text{Hz}]$.
-The lower guard removes the crowded region below $1000$~Hz, where shaft
-harmonics, motor hum and load-dependent friction noise sit; the upper guard
-keeps the transition band of the acquisition anti-alias filter out of the
-search. Any sub-band that crosses either guard is scored $-\infty$, so an
-excluded band can never win the maximization.
+The search is restricted to $[1000~\text{Hz},\ f_s/2-150~\text{Hz}]$: the lower
+guard skips the crowded region below $1000$~Hz and the upper guard keeps the
+acquisition anti-alias transition band out of the search. Any sub-band crossing
+either guard is scored $-\infty$, so an excluded band can never win.
 
 For each band output $y_{k,i}[n]$, impulsiveness is measured by the fourth
 standardized central moment, the Kurtosis~\cite{antoni2006}:
@@ -61,12 +52,11 @@ standardized central moment, the Kurtosis~\cite{antoni2006}:
   \left(y_{k,i}[n] - \mu_{y}\right)^4}{\left(\frac{1}{N}\sum_{n=0}^{N-1}
   \left(y_{k,i}[n] - \mu_{y}\right)^2\right)^2}
 \end{equation}
-with $\mu_y$ the mean of the band signal. The fourth power in the numerator is
-what makes spikes count: one large transient outweighs many small samples. The
-denominator, the squared variance $\sigma_y^4$, normalizes out the band energy,
-so a loud band does not win by being loud. Gaussian noise gives $K \approx 3$.
-A band full of repeated impacts gives $K$ well above $3$. The band with the
-largest $K$ is selected:
+with $\mu_y$ the mean of the band signal. The fourth power lets one large
+transient outweigh many small samples, while the squared variance $\sigma_y^4$
+normalizes out the band energy so a loud band does not win by being loud.
+Gaussian noise gives $K \approx 3$; a band of repeated impacts gives $K$ well
+above $3$. The band with the largest $K$ is selected:
 \begin{equation}
   \{f_c^*, BW^*\} = \arg\max_{f_{c,i}, \, \Delta f_k} K(f_{c,i}, \Delta f_k)
 \end{equation}
@@ -76,10 +66,8 @@ $\omega_1 = 2\pi f_{\text{low}}/f_s$ and $\omega_2 = 2\pi f_{\text{high}}/f_s$.
 
 \subsubsection{Bandpass Filter Design: Kaiser FIR versus Butterworth IIR}
 Two filters are designed for that passband, a linear-phase FIR and a
-Butterworth IIR. Both have to reject out-of-band motor interference and
-broadband noise.
-
-The FIR is Type-I, with even order $M$ and $L = M + 1$ taps. The ideal
+Butterworth IIR, both rejecting out-of-band motor interference and broadband
+noise. The FIR is Type-I, with even order $M$ and $L = M + 1$ taps: the ideal
 bandpass impulse response is truncated around its symmetry center $\alpha = M/2$
 and multiplied by a Kaiser window~\cite{oppenheim}:
 \begin{equation}
@@ -100,11 +88,10 @@ the delay is flat:
   -\frac{d\angle H_{\text{FIR}}(e^{j\omega})}{d\omega} = \frac{M}{2}
   \text{ samples}
 \end{equation}
-An FIR of this form has all its poles at $z = 0$ and only zeros elsewhere, so it
-is stable whatever the coefficients do. The price is arithmetic: a longer window
-buys a steeper transition, and every extra tap costs one more operation per
-sample. The design in Section~IV uses $\beta = 8$, which targets roughly
-$-80$~dB of stopband attenuation.
+An FIR of this form has all its poles at $z = 0$, so it is stable whatever the
+coefficients do; the price is arithmetic, since every extra tap buys a steeper
+transition at one more operation per sample. Section~IV uses $\beta = 8$, which
+targets roughly $-80$~dB of stopband attenuation.
 
 The second design is a $4^{\text{th}}$-order Butterworth bandpass, obtained with
 the bilinear transform~\cite{proakis}. That transform maps the left half of the $s$-plane into
@@ -112,25 +99,22 @@ the unit circle:
 \begin{equation}
   s = \frac{2}{T_s}\left(\frac{1 - z^{-1}}{1 + z^{-1}}\right)
 \end{equation}
-with $T_s = 1/f_s$. The mapping compresses frequency non-linearly, so the digital
-cutoffs are pre-warped before the prototype is transformed:
+with $T_s = 1/f_s$. The mapping compresses frequency non-linearly, so the
+digital cutoffs are pre-warped before the prototype is transformed:
 \begin{equation}
   \Omega_k = \frac{2}{T_s} \tan\!\left(\frac{\omega_k}{2}\right),
   \quad k \in \{1, 2\}
 \end{equation}
-After pre-warping, the $-3$~dB points land exactly on $f_{\text{low}}$ and
-$f_{\text{high}}$, and the passband stays maximally flat. These are the
-single-pass points. The forward--backward filter used here squares the
-magnitude response, so the same design points appear at $-6$~dB in the
-effective zero-phase response. The zero-phase filter operates on buffered
-$2.0$~s blocks rather than on a sample-by-sample causal stream: the whole
-block is available before the reverse pass begins.
+After pre-warping the $-3$~dB points land exactly on $f_{\text{low}}$ and
+$f_{\text{high}}$ with a maximally flat passband. Those are single-pass points:
+the forward--backward filter squares the magnitude response, so they appear at
+$-6$~dB in the effective zero-phase response. It runs on buffered $2.0$~s
+blocks, so the whole block is available before the reverse pass begins.
 
 \subsubsection{Cascade SOS Realization and Zero-Phase Filtering}
-A $4^{\text{th}}$-order bandpass has eight poles. Written in direct form, that is
-a degree-eight denominator, and in fixed point a small error in one coefficient
-moves the poles a long way. They can cross the unit circle. The fix is to factor
-the transfer function into $K = 4$ second-order sections:
+A $4^{\text{th}}$-order bandpass has eight poles, and in direct form a small
+coefficient error moves them far enough to cross the unit circle. The fix is to
+factor the transfer function into $K = 4$ second-order sections:
 \begin{equation}
   H_{\text{IIR}}(z) = G \prod_{k=1}^{K} H_k(z) = G \prod_{k=1}^{K}
   \frac{b_{0k} + b_{1k}z^{-1} + b_{2k}z^{-2}}
@@ -143,10 +127,10 @@ to contain the unit circle, so every pole radius must satisfy
   r_k = \sqrt{a_{2k}} < 1, \quad \forall k \in \{1, 2, \dots, K\}
 \end{equation}
 
-The cascade is cheap to run, but its phase is not linear near the band edges.
-Group delay then varies with frequency, which smears a short impact in time and
-lowers its peak. Forward-backward filtering removes the problem. The record is
-filtered, reversed, filtered again, and reversed back:
+The cascade is cheap, but its phase is not linear near the band edges, so the
+frequency-dependent group delay smears a short impact and lowers its peak.
+Forward--backward filtering removes that: the record is filtered, reversed,
+filtered again, and reversed back,
 \begin{equation}
   Y_{\text{BP}}(z) = H(z) H(z^{-1}) X_0(z)
 \end{equation}
@@ -156,9 +140,8 @@ so
   H_{\text{zero-phase}}(e^{j\omega}) = H(e^{j\omega}) H^*(e^{j\omega}) =
   |H(e^{j\omega})|^2
 \end{equation}
-That response is real and non-negative, so the phase is zero and the group delay
-is zero samples. The impacts keep their time positions and their shape, and the
-stopband attenuation doubles in decibels: a single-pass $-3$~dB edge becomes
-$-6$~dB and a $-40$~dB stopband becomes $-80$~dB. The passband edge shifts a
-little inward, because the effective filter is the square of the one that was
-designed.
+which is real and non-negative, so the phase and the group delay are zero. The
+impacts keep their time positions and shape, and the stopband attenuation
+doubles in decibels: $-40$~dB becomes $-80$~dB. The passband edge shifts a
+little inward, because the effective filter is the square of the designed
+one.

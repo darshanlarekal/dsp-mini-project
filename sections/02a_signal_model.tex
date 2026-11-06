@@ -3,12 +3,12 @@
 % Owner: Member 1
 % ===========================================================================
 \subsection{Continuous-to-Discrete Fault Signal Model}
-A localized bearing defect behaves like a sequence of short impacts. Write the
-impact times as $t_m = m/f_{\text{fault}} + \varepsilon_m$, where
-$f_{\text{fault}}$ is the nominal repetition rate and $\varepsilon_m$ is a
-timing error from local slip or speed fluctuation. Impact $m$ has amplitude
-$A_m$ and excites the structure with impulse response $h(t)$. Background
-machine vibration and sensor noise enter as $w(t)$, so
+A localized bearing defect behaves like a sequence of short impacts at times
+$t_m = m/f_{\text{fault}} + \varepsilon_m$, where $f_{\text{fault}}$ is the
+nominal repetition rate and $\varepsilon_m$ a timing error from slip or speed
+fluctuation. Impact $m$ has amplitude $A_m$ and excites the structure with
+impulse response $h(t)$; background vibration and sensor noise enter as
+$w(t)$, so
 \begin{equation}
   x(t) = \sum_{m} A_m\, h(t-t_m) + w(t).
   \label{eq:ctmodel}
@@ -19,10 +19,10 @@ sinusoid,
   h(t) = e^{-\sigma t}\cos(2\pi f_r t)\,u(t), \qquad t\geq 0,
   \label{eq:ctir}
 \end{equation}
-where $\sigma$ is the decay rate, $f_r$ the resonance frequency and $u(t)$ the
-unit step. The response starts at the impact and decays afterwards, which is
-what makes it causal. The same repeated-impact, exponentially decaying picture
-is the classical localized-defect model~\cite{mcfadden1984}.
+with $\sigma$ the decay rate, $f_r$ the resonance frequency and $u(t)$ the unit
+step, so the response starts at the impact and decays afterwards. This
+repeated-impact, exponentially decaying picture is the classical
+localized-defect model~\cite{mcfadden1984}.
 
 Sampling with period $T_s=1/f_s$ gives
 \begin{equation}
@@ -30,27 +30,22 @@ Sampling with period $T_s=1/f_s$ gives
   n_m \approx \operatorname{round}(f_s t_m).
   \label{eq:model}
 \end{equation}
-The same signal can be written through the impact sequence
-$p[n]=\sum_m A_m\delta[n-n_m]$, as $x[n]=p[n]*h[n]+w[n]$, where $*$ is linear
-convolution. The nominal spacing between impacts is
+Through the impact sequence $p[n]=\sum_m A_m\delta[n-n_m]$ the same signal is
+$x[n]=p[n]*h[n]+w[n]$, with $*$ linear convolution and a nominal impact spacing
 $N_p\approx f_s/f_{\text{fault}}$ samples. $N_p$ need not be an integer, and
 small timing errors push the observed spectral peaks away from the ideal
-kinematic frequencies.
+kinematic frequencies. Sampling must satisfy $f_s>2f_{\max}$, and the
+acquisition chain has to suppress out-of-band components first or aliasing
+folds them into the band of interest. The records here run at $12$ and
+$48$~kHz (CWRU) and $48.828$ and $97.656$~kHz (MFPT), putting Nyquist at $6$,
+$24$, $24.414$ and $48.828$~kHz.
 
-The sampling frequency has to be more than twice the highest vibration
-frequency that must be represented, $f_s>2f_{\max}$. The acquisition chain also
-has to suppress out-of-band components before sampling, or aliasing folds them
-into the band of interest. The records used here run at $12$ and $48$~kHz
-(CWRU) and at $48.828$ and $97.656$~kHz (MFPT), which puts the Nyquist
-frequencies at $6$, $24$, $24.414$ and $48.828$~kHz.
-
-In the $z$-plane, $h[n]$ gives a complex-conjugate pole pair
+In the $z$-plane $h[n]$ gives the complex-conjugate pole pair
 \begin{equation}
   z_{1,2} = r e^{\pm j\omega_r}, \qquad r = e^{-\sigma T_s} < 1,
   \label{eq:poles}
 \end{equation}
-and stability follows from $|z_{1,2}|<1$. The model also makes the central
-point of the paper explicit. The fault signature $A_m$ is a
-\emph{low-frequency modulation} of a \emph{high-frequency carrier}
-$\omega_r$. Demodulation separates the two; direct spectral inspection does
-not.
+and $|z_{1,2}|<1$ gives stability. The model also states the central point: the
+fault signature $A_m$ is a \emph{low-frequency modulation} of a
+\emph{high-frequency carrier} $\omega_r$, which demodulation separates and
+direct spectral inspection does not.

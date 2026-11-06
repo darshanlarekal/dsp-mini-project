@@ -25,11 +25,10 @@ documented for that dataset: eight rolling elements, $0.235$~in element
 diameter, $1.245$~in pitch diameter and $0^\circ$ contact angle. Geometry goes
 into the calculator explicitly, so each dataset gets the right bearing.
 
-Table~\ref{tab:kinematics} lists the CWRU frequencies at the four load
-settings, and the MFPT frequencies at the stated shaft rate of $25$~Hz
-($1500$~rpm). All of them are ideal targets from geometry. Rolling-element
-slip and speed variation can move the real fault peaks, and the detector of
-Section~II-D is built to allow for that.
+Table~\ref{tab:kinematics} lists the CWRU frequencies at the four load settings
+and the MFPT frequencies at $25$~Hz ($1500$~rpm). They are ideal targets from
+geometry; slip and speed variation move the real peaks, which the detector of
+Section~II-D allows for.
 
 \begin{table}[!t]
 \renewcommand{\arraystretch}{1.15}
@@ -64,14 +63,13 @@ and, for many fault files, the drive-end sampling rate in a \texttt{DE12} or
 \texttt{DE48} suffix. The loader reads all of it from that name: RPM, fault
 label, defect diameter, race position and the rate suffix.
 
-Two cases need care. Normal DE files have no rate suffix, and the BA rate is
-never inferred, so both need a sampling rate that has been verified rather
-than a silent default. FE channels run at $12$~kHz even when they sit beside
-\texttt{DE48} data. The load conditions used here are $1797$~rpm ($0$~HP),
-$1772$~rpm ($1$~HP), $1750$~rpm ($2$~HP) and $1730$~rpm ($3$~HP). The wider
-dataset description sometimes quotes a speed range down to about $1720$~rpm,
-so an individual recording takes its speed from its metadata where that
-exists, not from the load label~\cite{smith2015}.
+Two cases need care: normal DE files carry no rate suffix and the BA rate is
+never inferred, so both need a verified sampling rate rather than a silent
+default, and FE channels run at $12$~kHz even beside \texttt{DE48} data. The
+load conditions are $1797$~rpm ($0$~HP), $1772$~rpm ($1$~HP), $1750$~rpm
+($2$~HP) and $1730$~rpm ($3$~HP); since the dataset description quotes speeds
+down to about $1720$~rpm, each recording takes its speed from metadata where
+that exists, not from the load label~\cite{smith2015}.
 
 \emph{MFPT:} the standard MATLAB recordings hold a vibration vector
 \texttt{gs} together with load, shaft-rate and sample-rate
@@ -89,11 +87,10 @@ The first step subtracts the sample mean,
   \label{eq:demean}
 \end{equation}
 A constant DC offset would otherwise put energy at zero frequency. Optional
-peak normalization divides $x_0[n]$ by $\max|x_0[n]|$; RMS normalization
-divides by $\sqrt{(1/N)\sum_n x_0^2[n]}$. The demeaned signal stays as the
-reference in the implementation. Normalization is for comparing waveform shape
-only. It should not be used to flatten real load-dependent amplitude
-differences in quantitative comparisons.
+peak normalization divides $x_0[n]$ by $\max|x_0[n]|$ and RMS normalization by
+$\sqrt{(1/N)\sum_n x_0^2[n]}$; the demeaned signal stays as the reference, and
+normalization serves waveform-shape comparison only, never flattening real
+load-dependent amplitudes in quantitative comparisons.
 
 \subsection{Baseline Spectra and Window Comparison}
 The baseline FFT runs after mean removal and optional windowing. For a window
@@ -107,18 +104,17 @@ magnitude by $\sum_n w[n]$ and doubling the positive-frequency bins other than
 DC and, for even $N$, the Nyquist bin. The STFT applies the same transform to
 successive overlapping frames, so frequency content can be followed in time.
 
-A finite record may hold a non-integer number of cycles of a sinusoid.
-Multiplication by the observation window then spreads energy into neighbouring
-DFT bins, which is spectral leakage. A rectangular window has a narrow main
-lobe and comparatively high sidelobes. Hann and Blackman windows lower the
-sidelobes and pay for it with a wider main lobe. The implementation compares
-all three on the same input and sampling settings, first on a controlled
-off-bin sinusoid and then on the STFT of a record.
+A finite record may hold a non-integer number of cycles, and the observation
+window then spreads energy into neighbouring DFT bins: spectral leakage. A
+rectangular window has a narrow main lobe and high sidelobes; Hann and
+Blackman lower the sidelobes at the cost of a wider main lobe. All three are
+compared on the same input, first on a controlled off-bin sinusoid and then on
+the STFT of a record.
 
-The controlled test uses $f_s=12$~kHz, $N=2048$ and an off-bin tone at
-$1467.01$~Hz. Table~\ref{tab:leakage} gives the fraction of FFT energy that
-falls outside an approximate, window-specific main-lobe region. It is an
-educational comparison, not a universal standard.
+The controlled test uses $f_s=12$~kHz, $N=2048$ and a tone at $1467.01$~Hz.
+Table~\ref{tab:leakage} gives the fraction of FFT energy outside a
+window-specific main-lobe region; it is an educational comparison, not a
+universal standard.
 
 \begin{table}[!t]
 \caption{Leakage fraction beyond a window-specific main-lobe region, measured
@@ -138,18 +134,17 @@ Blackman    & 0.00000295 \\
 \end{table}
 
 \subsection{Pipeline Parameters}
-Unless stated otherwise, the experiments use $f_s=12$~kHz, a
-$4^{\text{th}}$ order Butterworth bandpass in cascade SOS form with
-forward--backward filtering, a Hann-windowed FFT with coherent-gain
-calibration, guard bins $N_G=4$, $N_R=25$ reference bins on each side,
-$\alpha=3.5$ for CA-CFAR and $\gamma=7.0$ for the Median--MAD rule. The SES
-uses the next power of two above the frame length ($32\,768$ bins for a
-$24\,000$-sample frame, $\Delta f\approx0.37$~Hz), while the baseline spectra
-use the full record length ($\Delta f\approx0.10$~Hz for a $121\,991$-sample
-CWRU record). The three thresholds are estimated on the SES up to $650$~Hz and only then
-cropped to the evaluation band, so the CFAR reference windows keep their
-right-hand cells. The static threshold is calibrated once on the first
-$2.0$~s segment of the $0$~HP outer-race reference, at $T_{\text{static}}=
-0.00228$ (the largest Median--MAD level found in its three BPFO harmonic
-windows), and then held fixed on every record. Any change in its performance
-across loads or datasets therefore comes from the data, not from re-tuning.
+Unless stated otherwise the experiments use $f_s=12$~kHz, a
+$4^{\text{th}}$-order Butterworth bandpass in cascade SOS form with
+forward--backward filtering, a Hann-windowed FFT with coherent-gain calibration,
+$N_G=4$ guard bins, $N_R=25$ reference bins per side, $\alpha=3.5$ for CA-CFAR
+and $\gamma=7.0$ for Median--MAD. The SES uses the next power of two above the
+frame length ($32\,768$ bins for a $24\,000$-sample frame, $\Delta
+f\approx0.37$~Hz) and the baseline spectra the full record ($\Delta
+f\approx0.10$~Hz for a $121\,991$-sample CWRU record). Thresholds are estimated
+on the SES up to $650$~Hz and only then cropped to the evaluation band, so the
+CFAR reference windows keep their right-hand cells. The static threshold is
+calibrated once on the first $2.0$~s segment of the $0$~HP outer-race reference
+at $T_{\text{static}}=0.00228$, the largest Median--MAD level in its three BPFO
+harmonic windows, and then held fixed everywhere, so any change in its
+performance comes from the data rather than from re-tuning.

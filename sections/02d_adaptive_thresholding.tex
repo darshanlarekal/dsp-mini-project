@@ -3,21 +3,17 @@
 % Owner: Member 3
 % ===========================================================================
 \subsection{Local Noise-Floor Adaptive Spectral Thresholding}
-Load changes the SES floor in both directions. At $0$~HP the rolling elements
-press lightly on the raceways. The impacts are weak, and a fixed threshold set
-for normal running sits above the fault peaks, so they are missed. At $3$~HP
-friction raises the whole floor, and the same threshold is crossed by noise in
-dozens of bins. No single fixed value satisfies both cases.
+Load changes the SES floor in both directions: at $0$~HP the impacts are weak
+and a fixed threshold set for normal running sits above the fault peaks, while
+at $3$~HP friction raises the whole floor and the same threshold is crossed by
+noise in dozens of bins. No single fixed value satisfies both cases. A CFAR
+rule~\cite{richards} slides a window along the SES and estimates the local floor
+from the bins around the test bin, so the comparison is always made against the
+floor that is actually there, with no training data.
 
-A CFAR rule~\cite{richards} handles both cases. It slides a window along the SES and estimates
-the local floor from the bins around the test bin, so the comparison is always
-made against the floor that is actually there. No training data is needed, and
-the false-alarm rate stays fixed as the load changes.
-
-For a test bin $k$, the $N_G$ bins on each side are kept out of the estimate.
-The Hann mainlobe is four bins wide, so $N_G=4$ is enough to stop a fault peak
-from entering its own estimate. The $N_R=25$ bins beyond each guard band form
-the reference window
+For a test bin $k$, the $N_G=4$ bins on each side are kept out of the estimate,
+which covers the four-bin Hann mainlobe so a fault peak cannot enter its own
+estimate. The $N_R=25$ bins beyond each guard band form the reference window
 \begin{equation}
 \begin{aligned}
   \mathcal{W}_k=\big\{\text{SES}[m]\;\big|\;&
@@ -29,18 +25,17 @@ the reference window
 Two estimators are compared on $\mathcal{W}_k$.
 
 \subsubsection{Cell-Averaging CFAR}
-Cell averaging takes the mean of the window, as a moving-average filter would:
+Cell averaging takes the mean of the window, as a moving average would:
 \begin{equation}
   \hat{\mu}[k]=\frac{1}{2N_R}\sum_{x\in\mathcal{W}_k}x,
   \qquad T_{\text{CFAR}}[k]=\alpha\,\hat{\mu}[k],
   \label{eq:cacfar}
 \end{equation}
-with $\alpha=3.5$. This works while the floor changes slowly. It fails when a
-harmonic enters the window. A shaft harmonic at $1\times$ or $2\times$ RPM, or
-a nearby fault harmonic, pulls the mean up, and the threshold rises beside the
-fault, which is the one place it should stay low. A mean is easy to move: one
-large bin is enough. This is harmonic target masking, and it is the reason the
-next estimator exists.
+with $\alpha=3.5$. This works while the floor changes slowly, but it fails when
+a harmonic enters the window: a shaft harmonic at $1\times$ or $2\times$ RPM or a
+nearby fault harmonic pulls the mean up, raising the threshold exactly where it
+should stay low, because a single large bin is enough to move a mean. This
+harmonic target masking is why the next estimator exists.
 
 \subsubsection{Proposed Order-Statistic Median--MAD Threshold}
 The proposed rule uses order statistics instead of the mean:
@@ -51,46 +46,39 @@ The proposed rule uses order statistics instead of the mean:
 \end{aligned}
   \label{eq:medmad}
 \end{equation}
-The factor $1.4826$ is the standardized nominal scale that makes the MAD
-agree with the standard deviation for a normal distribution,
-\begin{equation}
-  \hat{\sigma}_{\text{local}}[k]=1.4826\,\text{MAD}[k],
-  \label{eq:madscale}
-\end{equation}
-and it is used here as a fixed scale factor rather than as an unbiased
-estimate of a Gaussian $\sigma$, because the SES floor is not Gaussian.
-The threshold is
+The factor $1.4826$ is the nominal scale that makes the MAD agree with the
+standard deviation of a normal distribution, $\hat{\sigma}_{\text{local}}[k]
+=1.4826\,\text{MAD}[k]$, used here as a fixed scale factor rather than an
+unbiased Gaussian $\sigma$ estimate, because the SES floor is not Gaussian. The
+threshold is
 \begin{equation}
   T_{\text{MAD}}[k]=\hat{m}[k]+\gamma\left(1.4826\,\text{MAD}[k]\right),
   \label{eq:tmad}
 \end{equation}
-with $\gamma=7.0$. A larger $\gamma$ raises the threshold and lowers the
-false-alarm rate; a smaller one does the opposite. The median has a breakdown
-point of $50\%$~\cite{huber}, so up to half of the window can be contaminated before
-$T_{\text{MAD}}$ moves. The threshold follows the floor from $0$~HP to
-$3$~HP.
+with $\gamma=7.0$: a larger $\gamma$ lowers the false-alarm rate and a smaller
+one raises it. The median has a $50\%$ breakdown point~\cite{huber}, so up to
+half the window can be contaminated before $T_{\text{MAD}}$ moves, which lets
+the threshold follow the floor from $0$~HP to $3$~HP.
 
 \subsubsection{Slip-Tolerant Harmonic Comb}
-Heavy radial load also causes slip. The rolling elements skid by $1$--$2\%$,
-so the measured fault frequency is not the kinematic value. The detector
-therefore searches a band, not a single bin,
+Heavy radial load also makes the rolling elements skid by $1$--$2\%$, so the
+measured fault frequency is not the kinematic value and the detector searches a
+band, not a single bin,
 \begin{equation}
   \mathcal{B}_h=\left[hf_{\text{fault}}(1-\delta_{\text{slip}}),\;
   hf_{\text{fault}}(1+\delta_{\text{slip}})\right],
   \label{eq:comb}
 \end{equation}
-for each fault frequency, $f_{\text{BPFO}}$, $f_{\text{BPFI}}$ or
-$f_{\text{BSF}}$, and each harmonic order $h=1,2,3$. The half-width is
-$\delta_{\text{slip}}=1.5\%$, narrow enough to exclude the neighbouring
-harmonic orders and wide enough to cover the slip. A harmonic is present when
+for each fault frequency ($f_{\text{BPFO}}$, $f_{\text{BPFI}}$ or
+$f_{\text{BSF}}$) and harmonic order $h=1,2,3$. The half-width
+$\delta_{\text{slip}}=1.5\%$ excludes neighbouring orders while covering the
+slip. A harmonic is present when
 \begin{equation}
   \max_{f_k\in\mathcal{B}_h}\left(\text{SES}[k]-T_{\text{MAD}}[k]\right) > 0.
   \label{eq:decision}
 \end{equation}
 
-The exceedance rate that this rule produces is not a thermal-noise
-false-alarm probability. On a bearing SES the eligible non-harmonic bins
-contain unmasked shaft harmonics and modulation sidebands, so the measured
-rate counts the discrete interference lines that the harmonic mask did not
-cover; that is the quantity that matters for a detector operating on this
-kind of spectrum.
+The exceedance rate this rule produces is not a thermal-noise false-alarm
+probability: on a bearing SES the eligible non-harmonic bins hold unmasked
+shaft harmonics and modulation sidebands, so the measured rate counts the
+discrete interference lines the harmonic mask did not cover.

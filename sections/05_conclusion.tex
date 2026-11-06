@@ -3,30 +3,29 @@
 % Owner: Member 4
 % ===========================================================================
 \subsection{Summary of Diagnostic Achievements}
-Five results came out of the end-to-end run on the CWRU and MFPT records, which
-starts at the raw accelerometer channel and ends at a thresholded envelope
-spectrum.
+The end-to-end run, from the raw accelerometer channel to the thresholded
+envelope spectrum, gives five results.
 \begin{enumerate}
   \item The Fast Kurtogram found the resonance band by itself: $f_c=5181.8$~Hz
         with $545.5$~Hz of bandwidth on the $0$~HP outer-race record, with the
         search restricted to $[1000~\text{Hz}, f_s/2-150~\text{Hz}]$ and no
         manual tuning of the filter.
-  \item On the outer-race $7$~mil record, CA-CFAR and Median--MAD both
-        recovered the full BPFO harmonic comb in every segment at every load
-        ($100\%$ TDR), whereas the fixed level calibrated at $0$~HP averaged
-        only $40$--$80\%$ with spreads of up to $55$ points.
-  \item Across all $36$ CWRU fault records the adaptive rules improved the mean
+  \item On the outer-race $7$~mil record both adaptive rules recovered the full
+        BPFO comb in every segment at every load ($100\%$ TDR), whereas the
+        $0$~HP-calibrated fixed level averaged $40$--$80\%$ with spreads up to
+        $55$ points.
+  \item Across all $36$ CWRU fault records the adaptive rules raised the mean
         TDR from $40.9\%$ (static) to $57.8\%$ (CA-CFAR) and $56.3\%$
-        (Median--MAD), and cut the mean FAR from $10.7\%$ to $5.0\%$ and
-        $4.5\%$; on the MFPT outer- and inner-race records both reached
-        $100\%$ TDR at FAR $1.7$--$2.2\%$, while the CWRU-calibrated static
-        level flooded $89$--$100\%$ of the bins. On the healthy baselines the
-        adaptive rules stayed at $0.0$--$1.9\%$ crossings.
-  \item Zero-phase Butterworth SOS filtering, followed by coherent-gain
-        calibrated Hilbert envelope analysis, added $13.4$--$16.4$~dB of
-        spectral SNR on the CWRU outer-race record and $16.1$~dB on the MFPT
-        outer-race records; the MFPT inner-race records already carried sharp
-        raw harmonics and gained nothing ($-0.25$~dB).
+        (Median--MAD) and cut the mean FAR from $10.7\%$ to $5.0\%$ and
+        $4.5\%$; on the MFPT fault records both reached $100\%$ TDR at FAR
+        $1.7$--$2.2\%$ while the CWRU-calibrated level flooded $89$--$100\%$ of
+        the bins, and on the healthy baselines the adaptive rules stayed at
+        $0.0$--$1.9\%$ crossings.
+  \item Zero-phase Butterworth SOS filtering with coherent-gain calibrated
+        Hilbert envelope analysis added $13.4$--$16.4$~dB of spectral SNR on
+        the CWRU outer-race record and $16.1$~dB on the MFPT outer-race
+        records, while the MFPT inner-race records already carried sharp raw
+        harmonics and gained nothing ($-0.25$~dB).
   \item With Q$2.14$ coefficients and a Q$1.15$ bus, the fixed-point cascade
         keeps $r_{\max,q}=0.96262<1$ and reaches $70.05$~dB passband SQNR,
         against the $98.08$~dB ideal for $16$~bits; the gap is set by the
@@ -39,10 +38,9 @@ The same pipeline was timed and re-run in fixed point, to check its fit on an
 edge device.
 \begin{enumerate}
   \item \emph{Memory.} A $2.0$~s block ($N=24\,000$ samples) at $16$~bits per
-        sample needs $48$~kB of SRAM, and the $32\,768$-bin complex FFT buffer
-        at $16$~bits per component needs $128$~kB, for a working set of about
-        $176$~kB. That fits an STM32H7 Cortex-M7 part, which carries several
-        hundred kilobytes of SRAM.
+        sample needs $48$~kB of SRAM and the $32\,768$-bin complex FFT buffer
+        at $16$~bits per component needs $128$~kB, a working set of about
+        $176$~kB that fits an STM32H7 Cortex-M7 part.
   \item \emph{Execution latency.} The interpreted Python (CPython/Colab)
         pipeline takes $0.35$--$0.42$~s for a $2.0$~s CWRU window, so the duty
         cycle is
@@ -52,15 +50,15 @@ edge device.
   = 18\text{--}21\%.
   \label{eq:duty}
 \end{equation}
-        Even without compilation the chain is about five times faster than
-        real time, and the processor idles for about four fifths of the
-        timeline. The figure is a software timing, not an embedded benchmark.
-        The MFPT records, sampled at $48.828$~kHz, take about $0.81$--$0.90$~s
-        per $2.0$~s segment ($41$--$45\%$ duty).
-  \item \emph{Fixed-point suitability.} At $70.05$~dB the Q$1.15$/Q$2.14$
-        SQNR is $28$~dB below the $98.08$~dB signal-bus ideal, because the
-        high-$Q$ denominator coefficients are rounded to $16$ bits. The
-        harmonic decision survives (Section~IV-F), so integer MAC units can run
-        the filter, while the envelope FFT stage keeps a wider internal word
+        Even uncompiled the chain runs about five times faster than real time,
+        so the processor idles for four fifths of the timeline; this is a
+        software timing, not an embedded benchmark. The MFPT records, sampled
+        at $48.828$~kHz, take $0.81$--$0.90$~s per $2.0$~s segment
+        ($41$--$45\%$ duty).
+  \item \emph{Fixed-point suitability.} The $70.05$~dB Q$1.15$/Q$2.14$ SQNR
+        sits $28$~dB below the $98.08$~dB signal-bus ideal because the high-$Q$
+        denominator coefficients are rounded to $16$ bits. The harmonic
+        decision survives (Section~IV-F), so integer MAC units can run the
+        filter while the envelope FFT stage keeps a wider internal word
         length.
 \end{enumerate}

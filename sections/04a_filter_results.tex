@@ -11,7 +11,7 @@ at $K = 7.81$. The broadband input sat at $K = 7.56$.
 
 \begin{figure*}[!t]
 \centering
-\includegraphics[width=0.94\textwidth]{Fig1_Filter_PoleZero_Comparison.png}
+\includegraphics[width=0.88\textwidth]{Fig1_Filter_PoleZero_Comparison.png}
 \caption{Comparison of the Type-I Kaiser-windowed FIR bandpass filter
 ($M = 128$, $129$~taps, $\beta = 8.0$) and the $4^{\text{th}}$-order
 Butterworth Cascade SOS IIR bandpass filter across the Kurtosis-selected
@@ -29,32 +29,28 @@ $\beta = 8.0$) was compared against a $4^{\text{th}}$-order Butterworth IIR in
 cascade SOS form (four biquads). Fig.~\ref{fig:filter_comparison} shows the
 pole--zero map, the magnitude response, the phase response and the group delay.
 
-In Fig.~\ref{fig:filter_comparison}(a) the FIR has zeros spread along the
-stopband arcs and every pole at the origin. The IIR is different. The bilinear
-transform puts four zeros at $z = 1$, which blocks DC, and four at $z = -1$,
-which blocks Nyquist, with four conjugate pole pairs inside the passband arc.
-Its largest pole radius is $r_{\max} = 0.9626$. The region of convergence
-$|z| > 0.9626$ contains the unit circle, so the filter is BIBO stable. The four
-zeros at $z = \pm1$ are exact nulls rather than deep attenuation, which is why
-DC and Nyquist are blocked completely.
+In Fig.~\ref{fig:filter_comparison}(a) the FIR has zeros along the stopband
+arcs and every pole at the origin, whereas the bilinear transform puts four
+zeros at $z = 1$ (DC) and four at $z = -1$ (Nyquist) on the IIR, with four
+conjugate pole pairs inside the passband arc. Its largest pole radius is
+$r_{\max} = 0.9626$, and $|z| > 0.9626$ contains the unit circle, so the filter
+is BIBO stable. Those zeros are exact nulls rather than deep attenuation, which
+is why DC and Nyquist are blocked completely.
 
-Fig.~\ref{fig:filter_comparison}(b) compares magnitudes. Both filters are flat
-at $0$~dB across $[4909, 5455]$~Hz, and both reject the motor region below
-$1000$~Hz by more than $100$~dB. The $129$-tap FIR rolls off faster: it
-reaches below $-80$~dB within the transition and below $-110$~dB far from the
-passband. The price is arithmetic. One FIR pass costs $129$ multiply-accumulate
-(MAC) operations per sample. The four-section SOS cascade costs $4 \times 5 =
-20$ MACs per pass, and the zero-phase forward--backward filter runs two passes
-over the buffered block, so $2 \times 4 \times 5 = 40$ MACs per sample. That is
-$69\%$ fewer operations than the $129$-tap FIR.
+Fig.~\ref{fig:filter_comparison}(b) compares magnitudes: both are flat at
+$0$~dB across $[4909, 5455]$~Hz and reject the motor region below $1000$~Hz by
+more than $100$~dB, but the $129$-tap FIR rolls off faster, reaching below
+$-80$~dB within the transition and $-110$~dB far from the passband. The price is
+arithmetic: one FIR pass costs $129$ multiply-accumulate (MAC) operations per
+sample, while the four-section SOS cascade costs $4 \times 5 = 20$ MACs per pass
+and its zero-phase forward--backward form $2 \times 4 \times 5 = 40$ MACs per
+sample, $69\%$ fewer than the FIR.
 
-Fig.~\ref{fig:filter_comparison}(c) is the unwrapped phase. The FIR phase is
-exactly linear, the signature of a symmetric Type-I design, while the IIR phase
-bends through the passband because its poles and zeros are not phase-matched.
-Fig.~\ref{fig:filter_comparison}(d) is the group delay. In causal operation the
-FIR delays every frequency by the same $64$ samples. The IIR does not: its delay
-rises from about $20$ samples at the lower cutoff to about $38$ samples at
-$5455$~Hz, where the poles come close to the unit circle. With
-forward--backward filtering the effective response is
-$|H(e^{j\omega})|^2$, the phase term cancels, and the delay is zero samples
-everywhere.
+Fig.~\ref{fig:filter_comparison}(c) shows the unwrapped phase: the FIR phase
+is exactly linear, the signature of a symmetric Type-I design, while the IIR
+phase bends through the passband because its poles and zeros are not
+phase-matched. In Fig.~\ref{fig:filter_comparison}(d) the causal FIR delays
+every frequency by the same $64$ samples, whereas the IIR delay rises from about
+$20$ samples at the lower cutoff to about $38$ samples at $5455$~Hz, where the
+poles approach the unit circle. Forward--backward filtering squares the
+magnitude, cancels the phase term and leaves zero samples of delay everywhere.

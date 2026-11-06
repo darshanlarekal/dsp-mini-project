@@ -3,38 +3,34 @@
 % Owner: Member 1
 % ===========================================================================
 \IEEEPARstart{R}{olling} element bearings carry the shaft in motors, pumps,
-turbines, gearboxes and many other machines. Localized surface damage can grow
-into a severe mechanical failure if it is not found early, so the condition of
-the bearing matters for machine availability. Each time the rolling contact passes a
-damaged spot on an inner race, an outer race or a rolling element, it leaves a
-short contact disturbance. Those impacts excite resonances in the bearing and
-in the housing, and an accelerometer near the machine records the ringing. The
-useful information is the \emph{repetition rate} of the impacts, and
-demodulating the resonance recovers it. That is the principle behind envelope
+turbines and gearboxes, and localized surface damage grows into a severe
+mechanical failure if it is not found early. Each time the rolling contact
+passes a damaged spot on an inner race, an outer race or a rolling element, it
+leaves a short contact disturbance that excites resonances in the bearing and
+housing. The useful information is the \emph{repetition rate} of those impacts,
+which demodulating the resonance recovers: the principle behind envelope
 analysis~\cite{randall2011,kim2020}.
 
-The measured vibration is not stationary, and load is the main reason. Load
-changes the contact force, and with it the strength of the defect-induced
-impacts; it also changes the overall vibration and the noise floor. The
-effective shaft speed differs between load conditions, and local slip pulls
-the true impact rate a little away from the value that the bearing geometry
-predicts. A fixed threshold on raw amplitude, or on the spectrum, therefore
-cannot be expected to work at every load.
+The measured vibration is not stationary, and load is the main reason: it
+changes the contact force and with it the strength of the defect-induced
+impacts, the overall vibration and the noise floor. The effective shaft speed
+also differs between load conditions, and local slip pulls the true impact rate
+away from the geometric prediction, so a fixed threshold on raw amplitude or on
+the spectrum cannot work at every load.
 
-The approach here is pure DSP, not a model trained on labelled examples. Every
-stage can be inspected on its own, including the characteristic frequencies,
-the filters, the transforms and the detection thresholds. Nothing is hidden in
-learned weights. Interpretability does not guarantee generalization, though.
-Bearing geometry, shaft speed, sensor placement and validation data are still
-needed.
+The approach here is pure DSP, not a model trained on labelled examples: every
+stage, from the characteristic frequencies to the filters, transforms and
+thresholds, can be inspected on its own, with nothing hidden in learned weights.
+Interpretability does not guarantee generalization, though; bearing geometry,
+shaft speed, sensor placement and validation data are still needed.
 
 This paper applies two classical operations where they matter most. Kurtosis
-measures impulsiveness, so it finds the resonance that the defect
-excites~\cite{antoni2007}, and that is how the filter band is chosen. The
-decision threshold is estimated \emph{locally} in the envelope spectrum from
-an order statistic, which is not thrown off by the impulsive outliers that
-corrupt a moving average. The detector that comes out has no learned
-parameters and fits a fixed-point microcontroller.
+measures impulsiveness, so it finds the resonance the defect
+excites~\cite{antoni2007} and thereby chooses the filter band; the decision
+threshold is estimated \emph{locally} in the envelope spectrum from an order
+statistic, which the impulsive outliers that corrupt a moving average cannot
+move. The resulting detector has no learned parameters and fits a fixed-point
+microcontroller.
 
 The contributions of this paper are:
 \begin{itemize}
