@@ -1116,10 +1116,6 @@ File: figures/figure_1.png Graphic file (type bmp)
 <figures/figure_1.png>
 File: figures/figure_2.png Graphic file (type bmp)
 <figures/figure_2.png>
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [9]
 File: figures/figure_3.png Graphic file (type bmp)
 <figures/figure_3.png>
 File: figures/figure_4.png Graphic file (type bmp)
@@ -1130,18 +1126,17 @@ File: figures/figure_6.png Graphic file (type bmp)
 <figures/figure_6.png>
 File: figures/figure_7.png Graphic file (type bmp)
 <figures/figure_7.png>
-)
-(sections/backmatter) (sections/references
+) (sections/backmatter) (sections/references
 Underfull \hbox (badness 1377) in paragraph at lines 6--5
 []\TU/TeXGyreTermesX(0)/b/n/10 Vidyashankar T \TU/TeXGyreTermesX(0)/m/n/10 cura
 ted the datasets, formulated the
  []
 
-) [10] (main.aux)
+[9]) [10] (main.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: BA709D990CF3B5F0183D48928709E179;7718.
  )
-Output written on main.xdv (10 pages, 442960 bytes).
+Output written on main.xdv (10 pages, 443960 bytes).
